@@ -37,8 +37,8 @@ In dev console there are no errors, took me a lot time for debugging, searching,
 
 So, if you have suggestions and you're willing to dive into further developing or making the source even more accessible, feel free to put your skills at work.
 
- * [Discussions](app/discussions)
- * [Issues](app/issues)
+ * [Discussions](https://github.com/PwchiWorld/app/discussions)
+ * [Issues](https://github.com/PwchiWorld/app/issues)
 
 
 ---
