@@ -1,0 +1,30 @@
+<svg version="1.2" baseProfile="tiny-ps" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 148" width="200" height="148">
+	<title>xhd2.svg</title>
+<defs>
+   <radialGradient id="rgrad" cx="50%" cy="50%" r="50%" >
+    
+            <stop offset="0%" style="stop-color:rgb(240,223,197);stop-opacity:1.00" />
+            <stop offset="53%" style="stop-color:rgb(240,223,197);stop-opacity:1.00" />
+            <stop offset="100%" style="stop-color:rgb(222,205,180);stop-opacity:1.00" />
+
+    </radialGradient>
+
+<radialGradient id="rgrad2" cx="57%" cy="31%" r="97%" >
+    
+            <stop offset="0%" style="stop-color:#ffe4bb;stop-opacity:1.00" />
+            <stop offset="43%" style="stop-color:#f3ddbc;stop-opacity:0.60" />
+            <stop offset="85%" style="stop-color:rgb(212,196,173);stop-opacity:0.50" />
+            <stop offset="100%" style="stop-color:#900;stop-opacity:1.00" />
+
+    </radialGradient>
+  </defs>
+	<style>
+		tspan { white-space:pre }
+		.shp0 { fill: #f0dfc5 }
+                .shp2 { fill: url(#rgrad2) } 
+#headshadow{fill: url(#rgrad2)}
+#head{filter:drop-shadow(0 2px 1px rgb(0,0,0,0.30));}
+	</style>
+        <path id="head" class="shp0" d="M100 12C137.56 12 168 41.33 168 77.5C168 113.67 137.56 143 100 143C62.44 143 32 113.67 32 77.5C32 41.33 62.44 12 100 12Z" />
+	<path id="headshadow" class="shp1" d="M100 12C137.56 12 168 41.33 168 77.5C168 113.67 137.56 143 100 143C62.44 143 32 113.67 32 77.5C32 41.33 62.44 12 100 12Z" />
+</svg>
