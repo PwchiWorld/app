@@ -1,0 +1,8 @@
+<svg version="1.2" baseProfile="tiny-ps" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 148" width="200" height="148">
+	<title>head9</title>
+	<style>
+		tspan { white-space:pre }
+		.shp0 { fill: #79be67 ; filter:drop-shadow(0 2px 1px rgb(0,0,0,0.30));} 
+	</style>
+	<path id="head" class="shp0" d="M100 12C137.56 12 168 41.33 168 77.5C168 113.67 137.56 143 100 143C62.44 143 32 113.67 32 77.5C32 41.33 62.44 12 100 12Z" />
+</svg>
