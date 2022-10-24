@@ -1,0 +1,23 @@
+<svg version="1.2" baseProfile="tiny-ps" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 350 70" width="350" height="70">
+	<title>3bgtxt.svg</title>
+<defs>
+   <radialGradient id="rgrad" cx="50%" cy="10%" r="80%" >
+    
+            <stop offset="6%" style="stop-color:#222;stop-opacity:1.00" />
+            <stop offset="58%" style="stop-color:#111;stop-opacity:1.00" />
+            <stop offset="96%" style="stop-color:#000;stop-opacity:1.00" />
+
+    </radialGradient>
+  </defs>
+	<style>
+		tspan { white-space:pre }
+		.s0 { opacity: 0;fill: #164987 } 
+		.s1 { fill: #590161 } 
+		.s2 { opacity: 0;fill: #ffffff } 
+#mid{fill: url(#rgrad);}
+	</style>
+	<path id="main" class="s0" d="m0 0h350v70h-350v-70z" />
+	<path id="mid" class="s1" d="m14 2h322c3.87 0 7 3.13 7 7v49c0 3.87-3.13 7-7 7h-322c-3.87 0-7-3.13-7-7v-49c0-3.87 3.13-7 7-7z" />
+	<path id="tl" class="s2" d="m10.39 2.31l-4.46-2.31h43.61l4.46 2.31h-43.61zm-0.85 12.25l-6.36-3.42v-10l6.36 3.42v10zm-4.54 0.04l2.73 1.49v36.92l-2.73-1.49v-9.77l-5-2.75v-4.01l5 2.75v-2.14l-5-2.75v-4.01l5 2.75v-2.14l-5-2.75v-4.01l5 2.75v-2.14l-5-2.75v-4.01l5 2.75v-4.68z" />
+	<path id="br" class="s2" d="m339.61 64.69l4.46 2.31h-43.61l-4.46-2.31h43.61zm0.85-12.25l6.36 3.42v10l-6.36-3.42v-10zm4.54-0.04l-2.73-1.49v-36.92l2.73 1.49v9.77l5 2.75v4.01l-5-2.75v2.14l5 2.75v4.01l-5-2.75v2.14l5 2.75v4.01l-5-2.75v2.14l5 2.75v4.01l-5-2.75v4.68z" />
+</svg>
