@@ -1,0 +1,41 @@
+<svg version="1.2" baseProfile="tiny-ps" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 148" width="200" height="148" style="transform:translateY(-7px) translateX(-5px);">
+	<title>mo7</title>
+	<defs>
+  <radialGradient id="grd1" cx="50%" cy="0%" r="100%" >
+    
+            <stop offset="0%" style="stop-color:rgb(255,149,194);stop-opacity:1.00" />
+            <stop offset="50%" style="stop-color:rgb(255,0,182);stop-opacity:1.00" />
+            <stop offset="100%" style="stop-color:rgb(80,0,138);stop-opacity:1.00" />
+
+    </radialGradient>
+				
+				<filter id="shadow">
+  <feDropShadow 
+    dx="0" 
+    dy="5"
+    stdDeviation="2"
+    floodColor="#f1f1f1"
+    floodOpacity="0.7"
+  />
+</filter>
+
+<filter id="sh2">
+  <feDropShadow 
+    dx="0" 
+    dy="0"
+    stdDeviation="1"
+    floodColor="#fffff"
+    floodOpacity="1"
+  />
+</filter>
+
+  </defs>
+	<style>
+		tspan { white-space:pre }
+		.lipup { fill: url(#grd1);;transform:scaleY(1.1) translateX(5px);} 
+		.lipdown { fill: url(#grd1);transform:translateY(-3px) scaleY(1.1); }
+		.shadowz{filter: url(#sh2);}
+	</style>
+	<path id="lu" class="lipup shadow" d="M116.58 35.91C113.6 34.61 108.04 32.42 104.95 32.64C104.33 32.68 103.77 32.67 103.27 32.61C102.99 32.88 102.66 33.04 102.3 33.04L98.69 33.04C98.33 33.04 98 32.88 97.72 32.61C97.22 32.67 96.66 32.68 96.04 32.64C92.95 32.42 87.39 34.61 84.41 35.91C81.43 37.21 84.11 32.96 84.11 32.96C84.11 32.96 95.53 23.35 96.77 24.01C98.01 24.66 100.3 26.82 100.3 26.82L100.39 27.66L100.6 27.66L100.69 26.82C100.69 26.82 102.98 24.66 104.22 24.01C105.46 23.35 116.89 32.96 116.89 32.96C116.89 32.96 119.57 37.21 116.58 35.91Z" />
+	<path id="ld" class="lipdown"  d="M101.5 42.81C101.32 42.93 101.11 42.99 100.9 42.99L100.5 42.99C100.28 42.99 100.08 42.93 99.89 42.81C98.21 42.84 93.36 42.43 89.24 37.36C89.24 37.36 94.56 39.86 96.54 39.32C97.63 39.02 98.79 38.77 99.62 38.6C99.87 38.35 100.17 38.21 100.5 38.21L100.9 38.21C101.22 38.21 101.52 38.35 101.77 38.6C102.6 38.77 103.76 39.02 104.85 39.32C106.83 39.86 112.15 37.36 112.15 37.36C108.03 42.43 103.18 42.84 101.5 42.81Z" />
+</svg>
