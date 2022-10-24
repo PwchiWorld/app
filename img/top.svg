@@ -1,0 +1,10 @@
+<svg version="1.2" baseProfile="tiny-ps" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 142 120" width="142" height="120">
+	<title>rigjt</title>
+	<style>
+		tspan { white-space:pre }
+		.shp0 { fill: #f23e0d } 
+	</style>
+	<path id="top" class="shp0" d="M93 2C93 2 87.14 37.95 86 41C84.86 44.05 71 54 71 54L57 43L50 3C73.73 -2.08 93 2 93 2Z" />
+	<path id="left" class="shp0" d="M2 83L14 111C14 111 11.95 121.42 9 120C6.05 118.58 1 93 1 93C0.76 89.17 2 83 2 83Z" />
+	<path id="rigjt" class="shp0" d="M141 93C141 93 135.95 118.58 133 120C130.05 121.42 128 111 128 111L140 83C140 83 141.24 89.17 141 93Z" />
+</svg>
