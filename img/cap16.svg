@@ -1,0 +1,28 @@
+<svg version="1.2" baseProfile="tiny-ps" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 175" width="200" height="175">
+	<title>cap16.svg</title>
+ <defs>
+   <radialGradient id="grd1" cx="50%" cy="50%" r="50%" >
+    
+            <stop offset="0%" style="stop-color:rgb(108,39,16);stop-opacity:0.83" />
+            <stop offset="46%" style="stop-color:rgb(125,65,5);stop-opacity:0.87" />
+            <stop offset="97%" style="stop-color:rgb(28,15,2);stop-opacity:0.87" />
+
+    </radialGradient>
+
+<radialGradient id="grd2" cx="20%" cy="30%" r="50%" >
+    
+            <stop offset="0%" style="stop-color:rgb(255,251,55);stop-opacity:0.42" />
+            <stop offset="26%" style="stop-color:rgb(255,248,58);stop-opacity:0.50" />
+            <stop offset="61%" style="stop-color:rgb(255,238,133);stop-opacity:0.38" />
+
+    </radialGradient>
+
+  </defs>
+	<style>
+		tspan { white-space:pre }
+		.shp0 {opacity:.5;fill: url(#grd2); }
+		#mtr{transform: translate(0,4px) scaleY(.99) scaleX(.99); transform-origin:center center;}
+	</style>
+	<path id="mtr" class="shp0" d="M160.95 95C160.95 95 152.02 86.74 149.87 80.79C147.72 74.84 100.5 73.83 100.5 73.83L99.5 73.83C99.5 73.83 52.28 74.84 50.13 80.79C47.98 86.74 39.05 95 39.05 95L32 95C32 95 40.87 39.77 99.5 40C99.67 40 99.83 40.01 100 40.01C100.17 40.01 100.33 40 100.5 40C159.13 39.77 168 95 168 95L160.95 95Z" />
+</svg>
+
