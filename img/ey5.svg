@@ -1,0 +1,21 @@
+<svg version="1.2" baseProfile="tiny-ps" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 148" width="200" height="148">
+	<title>ey5</title>
+	<defs>
+		<linearGradient id="grd1" gradientUnits="userSpaceOnUse"  x1="61.749" y1="57.673" x2="61.749" y2="69.606">
+			<stop offset="0.62" stop-color="#5e5e5e" stop-opacity="0.6" />
+		</linearGradient>
+		<linearGradient id="grd2" gradientUnits="userSpaceOnUse"  x1="146.108" y1="55.621" x2="146.108" y2="68.042">
+			<stop offset="0.62" stop-color="#5e5e5e" stop-opacity="0.6" />
+		</linearGradient>
+	</defs>
+	<style>
+		tspan { white-space:pre }
+		.shp0 { fill: #000000 } 
+		.shp1 { fill: url(#grd1) } 
+		.shp2 { fill: url(#grd2) } 
+	</style>
+	<path id="lblak" class="shp0" d="M65.2 57.9C68.44 59.26 73.28 61.75 75.76 63.59C79.56 66.42 84.3 76.54 84.46 80.83C84.66 86.02 77.48 80.09 72.22 81.39C69.88 81.97 63.99 81.49 61.14 80.99C51.58 79.31 44.05 66.06 45.07 59.44C46.04 53.23 56.78 54.36 65.2 57.9Z" />
+	<path id="llight" class="shp1" d="M61.75 57.67C65.1 57.67 67.82 60.34 67.82 63.64C67.82 66.93 65.1 69.61 61.75 69.61C58.4 69.61 55.68 66.93 55.68 63.64C55.68 60.34 58.4 57.67 61.75 57.67Z" />
+	<path id="rblak" class="shp0" d="M155.93 59.44C156.95 66.06 149.42 79.31 139.86 80.99C137.01 81.49 131.12 81.97 128.78 81.39C123.52 80.09 116.34 86.02 116.54 80.83C116.7 76.54 121.44 66.42 125.24 63.59C127.72 61.75 132.56 59.26 135.8 57.9C144.22 54.36 154.96 53.23 155.93 59.44Z" />
+	<path id="right" class="shp2" d="M149.99 57.53C152.41 60.01 152.63 63.94 150.48 66.31C148.34 68.69 144.64 68.61 142.22 66.13C139.81 63.66 139.59 59.73 141.73 57.35C143.88 54.98 147.58 55.06 149.99 57.53Z" />
+</svg>

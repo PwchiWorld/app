@@ -1,0 +1,8 @@
+<svg version="1.2" baseProfile="tiny-ps" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 148" width="200" height="148">
+	<title>eyes</title>
+	<style>
+		tspan { white-space:pre }
+		.shp0 { fill: #000000 } 
+	</style>
+	<path id="eyes1" class="shp0" d="M65 63C68.31 63 71 66.58 71 71C71 75.42 68.31 79 65 79C61.69 79 59 75.42 59 71C59 66.58 61.69 63 65 63ZM135 63C138.31 63 141 66.58 141 71C141 75.42 138.31 79 135 79C131.69 79 129 75.42 129 71C129 66.58 131.69 63 135 63Z" />
+</svg>

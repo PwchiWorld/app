@@ -1,0 +1,60 @@
+<svg version="1.2" baseProfile="tiny-ps" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 148" width="200" height="148">
+	<title>ey7x</title>
+	<defs>
+		<linearGradient id="grd1" gradientUnits="userSpaceOnUse"  x1="72.75" y1="71.687" x2="72.75" y2="83.594">
+				<stop offset="0.62" stop-color="#5e5e5e" stop-opacity="0.6" />
+			<stop offset="50%" stop-color="#5e5e5e" stop-opacity="0.3" />
+			<stop offset="100%" stop-color="#5e5e5e" stop-opacity="0" />
+		</linearGradient>
+		<linearGradient id="grd2" gradientUnits="userSpaceOnUse"  x1="126.108" y1="72.621" x2="126.108" y2="85.042">
+				<stop offset="0.62" stop-color="#5e5e5e" stop-opacity="0.6" />
+			<stop offset="50%" stop-color="#5e5e5e" stop-opacity="0.3" />
+			<stop offset="100%" stop-color="#5e5e5e" stop-opacity="0" />
+		</linearGradient>
+		<linearGradient id="grd3" gradientUnits="userSpaceOnUse"  x1="126.108" y1="72.621" x2="126.108" y2="85.042">
+				<stop offset="0.62" stop-color="#f00" stop-opacity="1" />
+			<stop offset="50%" stop-color="#900" stop-opacity="1" />
+			<stop offset="100%" stop-color="#f00" stop-opacity="1" />
+		</linearGradient>
+		<filter id="shadow">
+  <feDropShadow 
+    dx="0"
+    dy="3"
+    stdDeviation="2"
+    floodColor="#000000"
+    floodOpacity="0.5"
+  />
+</filter>
+<filter id="shadow2">
+  <feDropShadow dx="0" dy="1" stdDeviation="3" floodColor="#000000" floodOpacity=".1"/>
+</filter>
+	</defs>
+	<style>
+		tspan { white-space:pre }
+		.shp0 { opacity: 1;fill: #000000 } 
+		.shp1 { fill: #000000} 
+		.eyesz{filter: url(#shadow2);}
+		.shp2 { opacity: 1;fill: #ffffff }
+		
+		   .shp2 { opacity: 1;fill: url(#grd3) } 
+	
+		.shp3 { fill: url(#grd1) } 
+		.shp4 { fill: url(#grd2) } 
+		.shp5 { opacity: 1;fill: #000000 }
+
+		*{filter:url(#shadow);}
+		#nr,#nl,.noshow{opacity:0;}
+
+		#nr,#nl,.noshow{opacity:0;}
+	</style>
+	<path id="sl" class="shp0" d="M86.65 79.71C86.58 79.88 86.49 80.02 86.39 80.13C86.28 80.24 86.17 80.32 86.06 80.38C85.82 80.48 85.55 80.46 85.27 80.29C84.7 79.96 84.09 79.01 83.36 77.4C81.87 74.59 78.9 72.65 75.28 71.27C63.61 68.35 43.35 76.02 43.35 76.02C51.63 71.58 58.58 69.44 64.23 68.67C63.08 68.51 61.95 68.37 60.85 68.25C52.03 67.37 44.13 67.98 44.14 67.97C55.3 65.69 63.91 65.78 70.47 67.07C73.73 67.73 76.4 68.75 78.62 69.89C80.83 71.03 82.62 72.26 83.98 73.45C86.78 75.77 87.33 78.35 86.65 79.71Z" />
+	<path id="sr" class="shp0" d="M116.01 73.09C117.39 71.92 119.21 70.73 121.44 69.63C123.68 68.54 126.36 67.57 129.64 66.97C136.23 65.81 144.83 65.9 155.95 68.39C155.96 68.4 148.07 67.63 139.24 68.34C138.13 68.44 137 68.56 135.85 68.7C141.48 69.58 148.38 71.85 156.59 76.46C156.59 76.46 136.48 68.39 124.75 71.08C121.11 72.39 118.09 74.27 116.55 77.06C115.79 78.65 115.16 79.59 114.58 79.91C114.3 80.07 114.03 80.09 113.8 79.98C113.68 79.92 113.57 79.84 113.47 79.72C113.38 79.61 113.29 79.47 113.21 79.3C112.56 77.93 113.16 75.36 116.01 73.09Z" />
+	<path id="darkl" class="shp1 eyes" d="M71.77 67.19C79.33 68.79 84.67 73.82 83.69 78.41C82.72 83 75.8 85.42 68.23 83.81C60.67 82.21 55.33 77.18 56.31 72.59C57.28 68 64.2 65.58 71.77 67.19Z" />
+	<path id="darkr" class="shp1 eyes" d="M128.23 67.19C135.8 65.58 142.72 68 143.69 72.59C144.67 77.18 139.33 82.21 131.77 83.81C124.2 85.42 117.28 83 116.31 78.41C115.33 73.82 120.67 68.79 128.23 67.19Z" />
+	<path id="wl" class="shp2" d="M71.83 73C74.49 73 76.65 75.01 76.65 77.5C76.65 79.99 74.49 82 71.83 82C69.16 82 67 79.99 67 77.5C67 75.01 69.16 73 71.83 73Z" />
+	<path id="wr" class="shp2" d="M127.17 73C129.84 73 132 75.01 132 77.5C132 79.99 129.84 82 127.17 82C124.51 82 122.35 79.99 122.35 77.5C122.35 75.01 124.51 73 127.17 73Z" />
+	<path id="llight" class="shp3" d="M72.75 71.69C76.1 71.69 78.81 74.35 78.81 77.64C78.81 80.93 76.1 83.59 72.75 83.59C69.4 83.59 66.69 80.93 66.69 77.64C66.69 74.35 69.4 71.69 72.75 71.69Z" />
+	<path id="right" class="shp4" d="M129.99 74.53C132.41 77.01 132.63 80.94 130.48 83.31C128.34 85.69 124.64 85.61 122.22 83.13C119.81 80.66 119.59 76.73 121.73 74.35C123.88 71.98 127.58 72.06 129.99 74.53Z" />
+	<path id="nl" class="shp5 noshow" d="M94.2 101.21C95.24 101.59 95.54 103.37 94.88 105.19C94.21 107 92.83 108.17 91.8 107.79C90.76 107.41 90.46 105.63 91.12 103.81C91.79 102 93.17 100.83 94.2 101.21Z" />
+	<path id="nr" class="shp5 noshow" d="M109.88 103.81C110.54 105.63 110.24 107.41 109.2 107.79C108.17 108.17 106.79 107 106.12 105.19C105.46 103.37 105.76 101.59 106.8 101.21C107.83 100.83 109.21 102 109.88 103.81Z" />
+</svg>
