@@ -1,0 +1,9 @@
+<svg version="1.2" baseProfile="tiny-ps" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 175" width="200" height="175">
+	<title>hair18j</title>
+	<style>
+		tspan { white-space:pre }
+		.shp0 { fill: #e3e3e3 } 
+		#mtr{transform:translateY(4px);}
+	</style>
+	<path id="mtr" class="shp0" d="M160.95 95C160.95 95 152.02 86.74 149.87 80.79C147.72 74.84 100.5 73.83 100.5 73.83L99.5 73.83C99.5 73.83 52.28 74.84 50.13 80.79C47.98 86.74 39.05 95 39.05 95L32 95C32 95 40.87 39.77 99.5 40C99.67 40 99.83 40.01 100 40.01C100.17 40.01 100.33 40 100.5 40C159.13 39.77 168 95 168 95L160.95 95Z" />
+</svg>
