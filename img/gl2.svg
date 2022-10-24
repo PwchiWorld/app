@@ -1,0 +1,16 @@
+<svg version="1.2" baseProfile="tiny-ps" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 148" width="200" height="148">
+	<title>gl2</title>
+	<style>
+		tspan { white-space:pre }
+		.shp0 { fill: #000000 } 
+		.shp1 { fill: #ffffff } 
+		.shp2 { opacity: 0.361;fill: #ffffff } 
+	</style>
+	<path id="mid" class="shp0" d="M81 66.94C96.42 60.75 104.96 60 119 66.94C119 68.63 119 70.31 119 72C105.55 65.08 94.13 65.17 81 72C81 70.31 81 68.63 81 66.94Z" />
+	<path id="ler" class="shp0" d="M114.31 61L142.69 61C145.62 61 148 63.38 148 66.31L148 74.66C148 79.26 144.26 83 139.66 83L125.69 83C116.47 83 109 75.53 109 66.31L109 66.31C109 63.38 111.38 61 114.31 61Z" />
+	<path id="lel" class="shp0" d="M56.31 61L84.69 61C87.62 61 90 63.38 90 66.31L90 66.31C90 75.53 82.53 83 73.31 83L59.34 83C54.74 83 51 79.26 51 74.66L51 66.31C51 63.38 53.38 61 56.31 61Z" />
+	<path id="l1" class="shp1" d="M66.37 61L71.37 61L64.09 83L59.09 83L66.37 61Z" />
+	<path id="l2" class="shp2" d="M66.37 61L76.37 61L69.09 83L59.09 83L66.37 61Z" />
+	<path id="r1" class="shp1" d="M131.37 61L136.37 61L129.09 83L124.09 83L131.37 61Z" />
+	<path id="r2" class="shp2" d="M131.37 61L141.37 61L134.09 83L124.09 83L131.37 61Z" />
+</svg>

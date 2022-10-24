@@ -1,0 +1,11 @@
+<svg version="1.2" baseProfile="tiny-ps" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 175" width="200" height="175" style="transform:translateY(10px);">
+	<title>hair6</title>
+	<style>
+		tspan { white-space:pre }
+		.shp0 { fill: #e9f536} 
+		.shp2 { fill: #edca40 }
+	</style>
+	<path id="top" class="shp0" d="M122 6C122 6 116.14 41.95 115 45C113.86 48.05 100 58 100 58L86 47L79 7C102.73 1.92 122 6 122 6Z" />
+	<path id="left" class="shp2" d="M31 87L43 115C43 115 40.95 125.42 38 124C35.05 122.58 30 97 30 97C29.76 93.17 31 87 31 87Z" />
+	<path id="rigjt" class="shp2" d="M170 97C170 97 164.95 122.58 162 124C159.05 125.42 157 115 157 115L169 87C169 87 170.24 93.17 170 97Z" />
+</svg>

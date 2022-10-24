@@ -1,0 +1,23 @@
+<svg version="1.2" baseProfile="tiny-ps" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 148" width="200" height="148">
+	<title>glasses</title>
+	<defs>
+		<linearGradient id="grd1" gradientUnits="userSpaceOnUse"  x1="143.899" y1="84.179" x2="138.064" y2="56.724">
+			<stop offset="0" stop-color="#5881c6" stop-opacity="0.6" />
+			<stop offset="1" stop-color="#000000" stop-opacity="0.4" />
+		</linearGradient>
+		<linearGradient id="grd2" gradientUnits="userSpaceOnUse"  x1="64.747" y1="83.874" x2="59.268" y2="58.096">
+			<stop offset="0" stop-color="#5881c6" stop-opacity="0.6" />
+			<stop offset="1" stop-color="#000000" stop-opacity="0.4" />
+		</linearGradient>
+	</defs>
+	<style>
+		tspan { white-space:pre }
+		.shp0 { fill: url(#grd1) } 
+		.shp1 { fill: none;stroke: #000000;stroke-width: 3.15 } 
+		.shp2 { fill: url(#grd2) } 
+	</style>
+	<path id="lens1" class="shp0" d="M128.19 59.35L150.4 56.86C156.22 55.94 161.65 59.68 162.52 65.2L162.95 67.92C163.82 73.45 159.8 78.66 153.98 79.58L132.08 84.04C126.08 84.99 120.45 80.89 119.5 74.89L119.03 71.93C118.09 65.93 122.19 60.29 128.19 59.35Z" />
+	<path id="frame1" class="shp1" d="M128.19 59.35L150.4 56.86C156.22 55.94 161.65 59.68 162.52 65.2L162.95 67.92C163.82 73.45 159.8 78.66 153.98 79.58L132.08 84.04C126.08 84.99 120.45 80.89 119.5 74.89L119.03 71.93C118.09 65.93 122.19 60.29 128.19 59.35Z" />
+	<path id="lens2" class="shp2" d="M84.05 70.76L83.81 73.75C83.33 79.81 78.02 84.32 71.97 83.84L49.79 81.06C43.92 80.59 39.51 75.69 39.96 70.12L40.18 67.37C40.63 61.8 45.75 57.66 51.63 58.13L73.96 58.92C80.02 59.4 84.53 64.71 84.05 70.76Z" />
+	<path id="frame2" class="shp1" d="M84.05 70.76L83.81 73.75C83.33 79.81 78.02 84.32 71.97 83.84L49.79 81.06C43.92 80.59 39.51 75.69 39.96 70.12L40.18 67.37C40.63 61.8 45.75 57.66 51.63 58.13L73.96 58.92C80.02 59.4 84.53 64.71 84.05 70.76Z" />
+</svg>
