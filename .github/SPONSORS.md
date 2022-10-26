@@ -2,7 +2,7 @@
 
 **Thank you for your contribution**
 Want to support the developer of this project?
-[Donate](https://donate.stripe.com/28odUocCl5HY14A288)
+[Donate](https://donate.stripe.com/9AQ3fK45P1rIfZubIJ)
 
 
 <table>
