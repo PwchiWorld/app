@@ -102,7 +102,6 @@ The license(s) of respective entities apply
 	  <td align="center"><a href="#"><img src="https://avatars.githubusercontent.com/u/13005368?s=100&v=3" width="100px;" alt="Pwchiman"/><br /><sub><b>to be added</b></sub></a><br /><a href="#discussions" title="Discussions">:soon:</a></td>
 	  <td align="center"><a href="#"><img src="https://avatars.githubusercontent.com/u/13005368?s=100&v=3" width="100px;" alt="Pwchiman"/><br /><sub><b>to be added</b></sub></a><br /><a href="#discussions" title="Discussions">:soon:</a></td>
 	  <td align="center"><a href="#"><img src="https://avatars.githubusercontent.com/u/13005368?s=100&v=3" width="100px;" alt="Pwchiman"/><br /><sub><b>to be added</b></sub></a><br /><a href="#discussions" title="Discussions">:soon:</a></td>
-
     </tr>
     <tr>
      <td align="center"><a href="#"><img src="https://avatars.githubusercontent.com/u/13005368?s=100&v=3" width="100px;" alt="Pwchiman"/><br /><sub><b>to be added</b></sub></a><br /><a href="#discussions" title="Discussions">:soon:</a></td>
