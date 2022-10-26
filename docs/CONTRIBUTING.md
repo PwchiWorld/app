@@ -21,7 +21,7 @@ To get an overview of the project, read the [README](https://github.com/PwchiWor
 
 ## Getting started
 
-To navigate our codebase with confidence, see [the introduction to working in the docs repository](/contributing/working-in-docs-repository.md) :confetti_ball:. For more information on how we write our markdown files, see [the GitHub Markdown reference](contributing/content-markup-reference.md).
+To navigate our codebase with confidence, see [the introduction to working in the docs repository](https://github.com/github/docs/blob/89aa42b8152d1647ee85431e0e358b10692b4055/contributing/working-in-docs-repository.md) :confetti_ball:. For more information on how we write our markdown files, see [the GitHub Markdown reference](https://github.com/github/docs/blob/89aa42b8152d1647ee85431e0e358b10692b4055/contributing/content-markup-reference.md).
 
 Check to see what [types of contributions](/contributing/types-of-contributions.md) we accept before making changes. Some of them don't even require writing a single line of code :sparkles:.
 
