@@ -95,22 +95,23 @@ The license(s) of respective entities apply
 <table>
   <tbody>
     <tr>
-      <td align="center"><a href="https://pwchi.design-xpro.com/participant/pwchiman/"><img src="https://avatars.githubusercontent.com/u/96176424?s=100&v=3" width="100px;" alt="Pwchiman"/><br /><sub><b>Pwchin Creator</b></sub></a><br /><a href="https://github.com/PwchiWorld/app/discussions" title="Answering Questions">ðŸ’¬</a></td>
-      <td align="center"><a href="#"><img src="https://avatars.githubusercontent.com/u/13005368?s=100&v=3" width="100px;" alt="Pwchiman"/><br /><sub><b>to be added</b></sub></a><br /><a href="#discussions" title="Answering Questions">ðŸ’¬</a></td>
-	  <td align="center"><a href="#"><img src="https://avatars.githubusercontent.com/u/13005368?s=100&v=3" width="100px;" alt="Pwchiman"/><br /><sub><b>to be added</b></sub></a><br /><a href="#discussions" title="Answering Questions">ðŸ’¬</a></td>
-	  <td align="center"><a href="#"><img src="https://avatars.githubusercontent.com/u/13005368?s=100&v=3" width="100px;" alt="Pwchiman"/><br /><sub><b>to be added</b></sub></a><br /><a href="#discussions" title="Answering Questions">ðŸ’¬</a></td>
-	  <td align="center"><a href="#"><img src="https://avatars.githubusercontent.com/u/13005368?s=100&v=3" width="100px;" alt="Pwchiman"/><br /><sub><b>to be added</b></sub></a><br /><a href="#discussions" title="Answering Questions">ðŸ’¬</a></td>
-	  <td align="center"><a href="#"><img src="https://avatars.githubusercontent.com/u/13005368?s=100&v=3" width="100px;" alt="Pwchiman"/><br /><sub><b>to be added</b></sub></a><br /><a href="#discussions" title="Answering Questions">ðŸ’¬</a></td>
-	  <td align="center"><a href="#"><img src="https://avatars.githubusercontent.com/u/13005368?s=100&v=3" width="100px;" alt="Pwchiman"/><br /><sub><b>to be added</b></sub></a><br /><a href="#discussions" title="Answering Questions">ðŸ’¬</a></td>
+      <td align="center"><a href="https://pwchi.design-xpro.com/participant/pwchiman/"><img src="https://avatars.githubusercontent.com/u/96176424?s=100&v=3" width="100px;" alt="Pwchiman"/><br /><sub><b>Pwchin Creator</b></sub></a><br /><a href="https://github.com/PwchiWorld/app/discussions" title="Answering Questions">:loudspeaker:</a></td>
+      <td align="center"><a href="#"><img src="https://avatars.githubusercontent.com/u/13005368?s=100&v=3" width="100px;" alt="Pwchiman"/><br /><sub><b>to be added</b></sub></a><br /><a href="#discussions" title="Discussions">:soon:</a></td>
+	  <td align="center"><a href="#"><img src="https://avatars.githubusercontent.com/u/13005368?s=100&v=3" width="100px;" alt="Pwchiman"/><br /><sub><b>to be added</b></sub></a><br /><a href="#discussions" title="Discussions">:soon:</a></td>
+	  <td align="center"><a href="#"><img src="https://avatars.githubusercontent.com/u/13005368?s=100&v=3" width="100px;" alt="Pwchiman"/><br /><sub><b>to be added</b></sub></a><br /><a href="#discussions" title="Discussions">:soon:</a></td>
+	  <td align="center"><a href="#"><img src="https://avatars.githubusercontent.com/u/13005368?s=100&v=3" width="100px;" alt="Pwchiman"/><br /><sub><b>to be added</b></sub></a><br /><a href="#discussions" title="Discussions">:soon:</a></td>
+	  <td align="center"><a href="#"><img src="https://avatars.githubusercontent.com/u/13005368?s=100&v=3" width="100px;" alt="Pwchiman"/><br /><sub><b>to be added</b></sub></a><br /><a href="#discussions" title="Discussions">:soon:</a></td>
+	  <td align="center"><a href="#"><img src="https://avatars.githubusercontent.com/u/13005368?s=100&v=3" width="100px;" alt="Pwchiman"/><br /><sub><b>to be added</b></sub></a><br /><a href="#discussions" title="Discussions">:soon:</a></td>
+	  <td align="center"><a href="#"><img src="https://avatars.githubusercontent.com/u/13005368?s=100&v=3" width="100px;" alt="Pwchiman"/><br /><sub><b>to be added</b></sub></a><br /><a href="#discussions" title="Discussions">:soon:</a></td>
     </tr>
     <tr>
-     <td align="center"><a href="#"><img src="https://avatars.githubusercontent.com/u/13005368?s=100&v=3" width="100px;" alt="Pwchiman"/><br /><sub><b>to be added</b></sub></a><br /><a href="#discussions" title="Answering Questions">ðŸ’¬</a></td>
-      <td align="center"><a href="#"><img src="https://avatars.githubusercontent.com/u/13005368?s=100&v=3" width="100px;" alt="Pwchiman"/><br /><sub><b>to be added</b></sub></a><br /><a href="#discussions" title="Answering Questions">ðŸ’¬</a></td>
-	  <td align="center"><a href="#"><img src="https://avatars.githubusercontent.com/u/13005368?s=100&v=3" width="100px;" alt="Pwchiman"/><br /><sub><b>to be added</b></sub></a><br /><a href="#discussions" title="Answering Questions">ðŸ’¬</a></td>
-	  <td align="center"><a href="#"><img src="https://avatars.githubusercontent.com/u/13005368?s=100&v=3" width="100px;" alt="Pwchiman"/><br /><sub><b>to be added</b></sub></a><br /><a href="#discussions" title="Answering Questions">ðŸ’¬</a></td>
-	  <td align="center"><a href="#"><img src="https://avatars.githubusercontent.com/u/13005368?s=100&v=3" width="100px;" alt="Pwchiman"/><br /><sub><b>to be added</b></sub></a><br /><a href="#discussions" title="Answering Questions">ðŸ’¬</a></td>
-	  <td align="center"><a href="#"><img src="https://avatars.githubusercontent.com/u/13005368?s=100&v=3" width="100px;" alt="Pwchiman"/><br /><sub><b>to be added</b></sub></a><br /><a href="#discussions" title="Answering Questions">ðŸ’¬</a></td>
-	  <td align="center"><a href="#"><img src="https://avatars.githubusercontent.com/u/13005368?s=100&v=3" width="100px;" alt="Pwchiman"/><br /><sub><b>to be added</b></sub></a><br /><a href="#discussions" title="Answering Questions">ðŸ’¬</a></td>
+     <td align="center"><a href="#"><img src="https://avatars.githubusercontent.com/u/13005368?s=100&v=3" width="100px;" alt="Pwchiman"/><br /><sub><b>to be added</b></sub></a><br /><a href="#discussions" title="Discussions">:soon:</a></td>
+	 <td align="center"><a href="#"><img src="https://avatars.githubusercontent.com/u/13005368?s=100&v=3" width="100px;" alt="Pwchiman"/><br /><sub><b>to be added</b></sub></a><br /><a href="#discussions" title="Discussions">:soon:</a></td>
+	 <td align="center"><a href="#"><img src="https://avatars.githubusercontent.com/u/13005368?s=100&v=3" width="100px;" alt="Pwchiman"/><br /><sub><b>to be added</b></sub></a><br /><a href="#discussions" title="Discussions">:soon:</a></td>
+	 <td align="center"><a href="#"><img src="https://avatars.githubusercontent.com/u/13005368?s=100&v=3" width="100px;" alt="Pwchiman"/><br /><sub><b>to be added</b></sub></a><br /><a href="#discussions" title="Discussions">:soon:</a></td>
+	 <td align="center"><a href="#"><img src="https://avatars.githubusercontent.com/u/13005368?s=100&v=3" width="100px;" alt="Pwchiman"/><br /><sub><b>to be added</b></sub></a><br /><a href="#discussions" title="Discussions">:soon:</a></td>
+	 <td align="center"><a href="#"><img src="https://avatars.githubusercontent.com/u/13005368?s=100&v=3" width="100px;" alt="Pwchiman"/><br /><sub><b>to be added</b></sub></a><br /><a href="#discussions" title="Discussions">:soon:</a></td>
+	 <td align="center"><a href="#"><img src="https://avatars.githubusercontent.com/u/13005368?s=100&v=3" width="100px;" alt="Pwchiman"/><br /><sub><b>to be added</b></sub></a><br /><a href="#discussions" title="Discussions">:soon:</a></td>
     </tr>
   </tbody>
 </table>
