@@ -1,6 +1,6 @@
 # Emoji
 
-<a align="right" href="#markdown_github.md">Markdown GitHub</a>
+<p align="right"><a href="https://github.com/PwchiWorld/app/edit/main/docs/#markdown_github.md">Markdown GitHub</a>
 
 ## Table of Contents
 
