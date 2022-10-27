@@ -87,6 +87,7 @@ Non responsive and not suitable for mobile devices
 The license(s) of respective entities apply
 * Jquery
 * HTML2Canvas 
+* License of the fonts
 * [CC-BY](https://creativecommons.org/licenses/by/3.0/)
 * Graphics [Intellectual Property](https://pwchi.design-xpro.com/participant/pwchiman/)
    * Concept [Intellectual Property](https://pwchi.design-xpro.com/participant/pwchiman/)  
@@ -126,3 +127,5 @@ The license(s) of respective entities apply
 
 
 ![hr](https://raw.githubusercontent.com/PwchiWorld/app/main/assets/img/hr.png)
+
+<sup align="right"><a href="https://github.com/PwchiWorld/app/blob/main/docs/markdown_github.md">markdown_github.md</a> | <a href="https://github.com/PwchiWorld/app/blob/main/docs/emoji_v5.md">emoji_v5.md</a> </sup>
