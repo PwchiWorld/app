@@ -52,11 +52,11 @@ So, if you have suggestions and you're willing to dive into further developing o
 ![hr](https://raw.githubusercontent.com/PwchiWorld/app/main/assets/img/hr.png)
 
 ### To Do
-**I'm not exactle an experienced developer but these are developmenets which needs to be implemented as soon as the project gets the touch of "experience".**
+**I'm not exactly an experienced developer but these are developments which needs to be implemented as soon as the project gets the touch of "experience".**
 Feel free to go even further.
 
 - [ ] use of Bootstrap framework
-- [ ] change the `onclick` event with more appropiate functionality
+- [ ] change the `onclick` event with more appropriate functionality
 - [ ] add Download button of generated Pwchin rather than using the right-click `Save image as...`
 - [ ] use of `json` file to hold graphic elements rather than load from CSS (ajax)
 - [ ] clean-up source code
@@ -88,8 +88,8 @@ The license(s) of respective entities apply
 * Jquery
 * HTML2Canvas 
 * [CC-BY](https://creativecommons.org/licenses/by/3.0/)
-* Graphics [Intelectual Property](https://pwchi.design-xpro.com/participant/pwchiman/)
-   * Concept [Intelectual Property](https://pwchi.design-xpro.com/participant/pwchiman/)  
+* Graphics [Intellectual Property](https://pwchi.design-xpro.com/participant/pwchiman/)
+   * Concept [Intellectual Property](https://pwchi.design-xpro.com/participant/pwchiman/)  
    
    
 ![hr](https://raw.githubusercontent.com/PwchiWorld/app/main/assets/img/hr.png)
