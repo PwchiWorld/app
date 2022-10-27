@@ -15,6 +15,8 @@ The app is using SVG as graphic elements (most of them) and throws back the comp
 ## Pwchi - Name
 Reversed first letters of **I** **H**ave **C**reated a **W**onderful **P**NG - ihcwp / **Pwchi**
 
+
+
 **Index** 
 - [About](README.md#about)
 - [To Do](README.md#to-do)
@@ -27,13 +29,19 @@ Reversed first letters of **I** **H**ave **C**reated a **W**onderful **P**NG - i
 ![hr](https://raw.githubusercontent.com/PwchiWorld/app/main/assets/img/hr.png)
 
 ### About (story behind)
-This web app is a `Pwchin` character creator. 
-Initially the concept was to be able to create avatars (at that that time, only the head was available for "editing".
-Time passed and... why not push for more, once I've stumbled upon HTML2Canvas (Screenshots with JavaScript) I've seen the potential.
-Without any programming skills (I don't have experience in javascript/jquery nor any other programming language) I've started connecting the dots.
-SVG graphics were created with Photopea offline version and took me a lot of time.
-There are a bunch of things which needs to be addressed but my skills kind of served their purpose up to the end.
-In dev console there are no errors, took me a lot time for debugging, searching, finding and implementing a working solution yet I didn't give up because around this I've started to build an entire environment... The Pwchi Word.
+
+
+
+<div align="left">
+<a href="https://pwchiworld.github.io/app/"><img src="https://pwchiworld.github.io/app/img/fan/fan10.png" align="right" width="200px;"/></a>
+<p>This web app is a <em>Pwchin</em> character creator. </p>
+<p>Initially the concept was to be able to create avatars (at that that time, only the head was available for "editing".</p>
+<p>Time passed and... why not push for more, once I've stumbled upon HTML2Canvas (Screenshots with JavaScript) I've seen the potential.</p>
+<a href="https://pwchiworld.github.io/app/"><img align="left" src="https://pwchiworld.github.io/app/img/fan/fan9.png" width="200px;"/></a>
+<p>Without any programming skills (I don't have experience in javascript/jquery nor any other programming language) I've started connecting the dots.</p>
+<p>SVG graphics were created with Photopea offline version and took me a lot of time.</p>
+<p>There are a bunch of things which needs to be addressed but my skills kind of served their purpose up to the end.</p>
+<p>In dev console there are no errors, took me a lot time for debugging, searching, finding and implementing a working solution yet I didn't give up because around this I've started to build an entire environment... <a href="https://pwchi.design-xpro.com/">The Pwchi Word</a>.</p></div>
 
 So, if you have suggestions and you're willing to dive into further developing or making the source even more accessible, feel free to put your skills at work.
 
