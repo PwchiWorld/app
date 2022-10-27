@@ -261,7 +261,7 @@ Next chapter or something!
 To turn URLs and email addresses into links, just wrap them into angle brackets:
 
 ```markdown
-Take a look at my Medium posts: <https://aerabi.medium.com>
+Take a look at Pwchie's website: <https://pwchi.design-xpro.com>
 You can also email me at <dascent@protonmail.com>
 ```
 
@@ -359,12 +359,12 @@ To hide contents in a Markdown document, one can use the HTML comment syntax:
 **Markdown**
 
 ```
-[![PwchiWorld](https://avatars.githubusercontent.com/u/116814275?s=48&v=4)](https://pwchiworld.github.io/app/)
+[![PwchiWorld](https://avatars.githubusercontent.com/u/116814275?s=100&v=4)](https://pwchiworld.github.io/app/)
 ```
 
 **HTML**
 ```
-<a href="https://pwchiworld.github.io/app/" title="ZentasticArts User"><img src="https://avatars.githubusercontent.com/u/116814275?s=48&v=4" alt="ZentasticArts User"></a>
+<a href="https://pwchiworld.github.io/app/" title="ZentasticArts User"><img src="https://avatars.githubusercontent.com/u/116814275?s=100&v=4" alt="ZentasticArts User"></a>
 ```
 
 **Render**
@@ -422,19 +422,22 @@ This is an example:
   <tbody>
     <tr>
       <td align="center">
-	  <h3>Hello World</h3>
+	  <h3>Hello World - Dan N</h3>
 	  </td>
 	  </tr>
     <tr>
       <td align="center">
 <div id="aboutme" align="left">
   <a href="https://zentasticarts.ro/profilul-meu/?uid=Dan"><img src="https://raw.githubusercontent.com/Dascent/zaro/main/dan.jpg" width="200" align="left"></a>
-  <p><em>Well, I'm multipurpose so I have lots of projects where I enjoy my time.</em><br>
+  <p><br>
+    :us: <em>Well, I'm multipurpose so I have lots of projects where I enjoy my time.</em><br>
     <em>Due to diversity (I love), my passions are oscilating between making money and making a difference</em><br>
     <em>Cofounder (mostley web designer) at CGC and CEO at <a href="https://zentasticarts.ro/profilul-meu/?uid=Dan">ZentasticArts</a></em></p>
-  <p></p>
-  <p></p>
-  <p></p>
+  <hr>
+  <p><br>
+    :romania: <em>Am multe proiecte în care îmi face placere să mă implic</em><br>
+    <em>Iubesc diversitatea, motiv pentru care pasiunile mele sunt totdeauna creativitatea și aspectul financiar.</em><br>
+    <em>Antreprenor, co-fondator, web designer,  CEO la <a href="https://zentasticarts.ro/profilul-meu/?uid=Dan">ZentasticArts</a></em></p>
   <p><img src="https://raw.githubusercontent.com/PwchiWorld/app/main/assets/img/hr.png" width="100%"/></p>
   <p align="right">Pseudonim: DAscent</p>
 </div>
@@ -462,19 +465,22 @@ This is an example:
   <tbody>
     <tr>
       <td align="center">
-	  <h3>Hello World</h3>
+	  <h3>Hello World - Dan N</h3>
 	  </td>
 	  </tr>
     <tr>
       <td align="center">
 <div id="aboutme" align="left">
   <a href="https://zentasticarts.ro/profilul-meu/?uid=Dan"><img src="https://raw.githubusercontent.com/Dascent/zaro/main/dan.jpg" width="200" align="left"></a>
-  <p><em>Well, I'm multipurpose so I have lots of projects where I enjoy my time.</em><br>
+  <p><br>
+    :us: <em>Well, I'm multipurpose so I have lots of projects where I enjoy my time.</em><br>
     <em>Due to diversity (I love), my passions are oscilating between making money and making a difference</em><br>
     <em>Cofounder (mostley web designer) at CGC and CEO at <a href="https://zentasticarts.ro/profilul-meu/?uid=Dan">ZentasticArts</a></em></p>
-  <p></p>
-  <p></p>
-  <p></p>
+  <hr>
+  <p><br>
+    :romania: <em>Am multe proiecte în care îmi face placere să mă implic</em><br>
+    <em>Iubesc diversitatea, motiv pentru care pasiunile mele sunt totdeauna creativitatea și aspectul financiar.</em><br>
+    <em>Antreprenor, co-fondator, web designer,  CEO la <a href="https://zentasticarts.ro/profilul-meu/?uid=Dan">ZentasticArts</a></em></p>
   <p><img src="https://raw.githubusercontent.com/PwchiWorld/app/main/assets/img/hr.png" width="100%"/></p>
   <p align="right">Pseudonim: DAscent</p>
 </div>
