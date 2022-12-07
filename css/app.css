@@ -591,9 +591,9 @@ input[type=text].namepwchi{display:block;width:100%;height:auto;box-sizing:borde
 	.dasclear:hover{padding:.5em;text-align:center;float:right;font-size:13px;color:#fff;background-color:#900;}
 	.outputimage:hover .dasclear{opacity:1;}
 	#thegallery{background-color:#f1f1f1;color:#F76422;}
-	.info{display:block;box-sizing:border-box;padding:.3em 1em .5em;}
-	.info p{font-size:15px;color:#666;}
-	.doinfo{display:block;width:100%;height:auto;margin:7px auto 4px;padding:.6em .7em .6em;background-color:#f1f1f1;}
+	.info{display:block;box-sizing:border-box;padding:.3em .7em .5em;}
+	.info p{font-size:12px;color:#666;}
+	.doinfo{display:block;width:100%;height:auto;margin:7px auto 4px;padding:.6em .5em .6em;background-color:#f1f1f1;}
 	.doinfo strong{display:block;width:100%;height:auto;color:#2A3955;margin:5px auto 1px auto;}
 	.doavatar{display:block;width:200px;height:200px;float:none;clear:left;padding:0;text-align:center;margin:10px auto 22px auto;border-radius:100% 100% 100% 100%;overflow:hidden;border:5px solid rgba(252,63,133,1.00);}
 	.imgresp img{display:block;width:100%;height:auto;margin:0 auto;}
