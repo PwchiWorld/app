@@ -1226,7 +1226,7 @@ else { password.setSelectionRange(0, password.value.length);document.getElementB
 				
 				<div class="dx-3 tcenter ptb-4 thebuttons">
 		 	  <button id="showstand" type="button" class="dxbtn">ON/OFF</button>
-			<button id="btn-Download-Image" class="dxbtn" style="position:fixed;top:20px;left:20px;">Download</button>
+			<button id="btn-Download-Image" class="dxbtn" style="position:fixed;top:20px;left:20px;z-index:9999;">Download</button>
 				</div>
 				
 				<div class="dx-2 tcenter ptb-4 thebuttons">
@@ -1425,11 +1425,11 @@ else { password.setSelectionRange(0, password.value.length);document.getElementB
 		});
 
 //Added
-		$("#btn-Download-Image").on('click', function () {
+	$("#btn-Download-Image").on('click', function () {
 	var imageData = getCanvas.toDataURL("image/png");
 	var downloadLink = document.createElement('a');
 	downloadLink.href = imageData;
-	downloadLink.download = 'myImage.png';
+	downloadLink.download = 'mypwchin.png';
 	document.body.appendChild(downloadLink);
 	downloadLink.click();
 	document.body.removeChild(downloadLink);
