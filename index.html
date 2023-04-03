@@ -30,7 +30,7 @@ Pwchi
 Pwchi Welsh language -  English / please
 
 Creator note:
-Try not to mess things up because I'm not a developer but I do receive some kind of informations on how to do things.
+Try not to mess things up because I'm not a developer.
 --->
 
 <!-- Editor Preview --->
@@ -1239,6 +1239,7 @@ else { password.setSelectionRange(0, password.value.length);document.getElementB
 				
 				
 			<div class="dx-2 tcenter ptb-4 thebuttons">
+				<button id="btn-Download-Image" class="dxbtn">Download</button>
 			 <button class="dxbtn" onclick="window.location.href=window.location.href">Refresh</button>
 			</div>
 </span>
@@ -1418,6 +1419,17 @@ else { password.setSelectionRange(0, password.value.length);document.getElementB
 			var imgageData = getCanvas.toDataURL("image/png");
 		});
 
+//Added
+		$("#btn-Download-Image").on('click', function () {
+	var imageData = getCanvas.toDataURL("image/png");
+	var downloadLink = document.createElement('a');
+	downloadLink.href = imageData;
+	downloadLink.download = 'myImage.png';
+	document.body.appendChild(downloadLink);
+	downloadLink.click();
+	document.body.removeChild(downloadLink);
+});
+//Added		
 	});
 	
 })(jQuery);
@@ -1744,6 +1756,9 @@ $( "#clear" ).click(function() {
     $('canvas').remove();
   });
 });
+	
+	
+	
 </script>
 
 
