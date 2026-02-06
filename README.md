@@ -41,7 +41,7 @@ Reversed first letters of **I** **H**ave **C**reated a **W**onderful **P**NG - i
 <p>Without any programming skills (I don't have experience in javascript/jquery nor any other programming language) I've started connecting the dots.</p>
 <p>SVG graphics were created with Photopea offline version and took me a lot of time.</p>
 <p>There are a bunch of things which needs to be addressed but my skills kind of served their purpose up to the end.</p>
-<p>In dev console there are no errors, took me a lot time for debugging, searching, finding and implementing a working solution yet I didn't give up because around this I've started to build an entire environment... <a href="https://pwchi.design-xpro.com/">The Pwchi Word</a>.</p></div>
+<p>In dev console there are no errors, took me a lot time for debugging, searching, finding and implementing a working solution yet I didn't give up because around this I've started to build an entire environment... <a href="https://pwchin.info/">The Pwchi Word</a>.</p></div>
 
 So, if you have suggestions and you're willing to dive into further developing or making the source even more accessible, feel free to put your skills at work.
 
