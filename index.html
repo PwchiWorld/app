@@ -1445,139 +1445,435 @@ else { password.setSelectionRange(0, password.value.length);document.getElementB
 -->
 <script>
 ;(function($){
-    $(document).ready(function(){
-        
-        // 1. INITIALIZE UI COMPONENTS
-        if ($.isFunction($.fn.tabs)) {
-            $( "#tabs" ).tabs({ classes: { "ui-tabs": "highlight" } });
-        }
-        if ($.isFunction($.fn.draggable)) {
-            $( ".dragit" ).draggable();
-        }
-        if ($.isFunction($.fn.accordion)) {
-            $(".achead").accordion({
-                icons: { "header": "ui-icon-plus", "activeHeader": "ui-icon-minus" },
-                active: 1
-            });
-        }
 
-        // 2. AVATAR CUSTOMIZATION LOGIC
-        const updatePart = (selector, checkboxClass) => {
-            $(`input.${checkboxClass}:checkbox`).change(function(){
-                $(selector).css('background-image', 'url(' + $(this).data("image") + ')');
-                $(`input[type="checkbox"].${checkboxClass}`).not(this).prop('checked', false); 
-            });
-        };
+	$(document).ready(function(){
 
-        updatePart(".head, .head2", "hdp");
-        updatePart(".eyes", "ey");
-        updatePart(".mouth", "mo");
-        updatePart(".glasses", "gl");
-        updatePart(".hair", "hr");
-        updatePart(".bgmain", "mbg");
-        updatePart(".bodybio", "bo");
-        updatePart(".bodyoutfit", "haine");
-        updatePart(".handslot", "items");
-        updatePart("#dxeditor", "pwchibg");
 
-        // Sliders
-        $('#eyeaxisy').on('input', e => $('.updown').css('transform', `translateY(${e.target.value}px)`));
-        $('#moaxisy').on('input', e => $('.updownmo').css('transform', `translateY(${e.target.value}px)`));
-        $('#moaxisx').on('input', e => $('#dxmouth').css('left', e.target.value + 'px'));
-        $('#domoopa').on('input', e => $('.dtrans').css('opacity', e.target.value));
-        $('#eyeaxisx').on('input', e => $('#dxeyes').css('left', e.target.value + 'px'));
-        $('#hairy').on('input', e => $('.hairup').css('top', e.target.value + 'px'));
-        $('#hairx').on('input', e => $('#hairelement').css('left', e.target.value + 'px'));
+	var element = $("#dxeditor");
+	var getCanvas; // global variable
 
-        // 3. GENERATE & DOWNLOAD (THE FIX)
-        let finalCanvas = null;
+		$("#btn-Preview-Image").on('click', function () {
+			 html2canvas(element, {
+			 onrendered: function (canvas) {
+					$("#previewImage").append(canvas);
+					getCanvas = canvas;
+					
+					// FLIP FUNCTIONALITY: When image is generated, swap the content
+					$("#showitgenerated").fadeOut(300, function() {
+						// Store the current content
+						var generatedContent = $('#showitgenerated').html();
+						
+						// Create new content with preview image and download button
+						var newContent = '<div id="previewImage" class="outputimage">' + 
+										 '<canvas></canvas>' + 
+										 '</div>' + 
+										 '<button id="btn-Download-Image" class="download-btn">Download Image</button>';
+						
+						// Replace the content
+						$('#showitgenerated').html(newContent);
+						
+						// Re-append the actual canvas (since we just have an empty canvas tag)
+						$("#previewImage").html(canvas);
+						
+						// Fade back in
+						$("#showitgenerated").fadeIn(300);
+					});
+				 }
+			 });
+		});
 
-        $("#renderpwchin").on('click', function() {
-            const editor = document.getElementById('dxeditor');
-            if(!editor) return alert("Editor not found");
+		$("#btn-Convert-Html2Image").on('click', function () {
+			var imgageData = getCanvas.toDataURL("image/png");
+		});
 
-            // Feedback
-            $("#renderitcool").addClass("dohighlight").show().html("<p style='color:white;'>Generating... Please wait.</p>");
-            
-            // Fix: Scroll to top before capture (html2canvas quirk)
-            window.scrollTo(0,0);
-
-            html2canvas(editor, {
-                useCORS: true,
-                allowTaint: true,
-                scale: 2,
-                logging: false,
-                backgroundColor: null
-            }).then(canvas => {
-                finalCanvas = canvas;
-                
-                // Switch UI: Hide Editor, Show Image
-                $("#dxeditor").hide();
-                $("#renderitcool").empty().append(canvas).removeClass("dohighlight");
-
-                // Add buttons if missing
-                if ($("#dl-group").length === 0) {
-                    $("#renderitcool").after(`
-                        <div id="dl-group" style="text-align:center; margin-top:20px; padding-bottom:40px;">
-                            <button id="downloadBtn" style="padding:15px 30px; background:#ff8c00; color:white; border:none; border-radius:10px; font-weight:bold;">SAVE IMAGE</button>
-                            <button id="backBtn" style="padding:15px 30px; background:#333; color:white; border:none; border-radius:10px; margin-left:10px;">EDIT AGAIN</button>
-                        </div>
-                    `);
-                } else {
-                    $("#dl-group").show();
-                }
-            }).catch(err => {
-                console.error("Render failed:", err);
-                alert("Failed to generate image. Ensure all images allow CORS.");
-            });
-        });
-
-        // Use Delegation for buttons
-        $(document).on('click', '#downloadBtn', function() {
-            if(!finalCanvas) return;
-            const link = document.createElement('a');
-            link.href = finalCanvas.toDataURL("image/png");
-            link.download = 'pwchin-avatar.png';
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-        });
-
-        $(document).on('click', '#backBtn', function() {
-            $("#renderitcool, #dl-group").hide();
-            $("#dxeditor").show();
-        });
-
-        // 4. MISC CONTROLS
-        window.dxsubmitTxt = function() {
-            $("#text1").html($("#myText1").val() || '<br>');
-        };
-        $('#textcolor').on('input', e => $('#text1').css('color', e.target.value));
-        $('#textbg').on('input', e => $('.thetext').css('background-color', e.target.value));
-        $('#slider').on('input', e => $('#text1').css('font-size', e.target.value + 'em'));
-        $("#showstand").click(() => $("#stand").toggleClass("on"));
-    });
+		// MODIFIED DOWNLOAD BUTTON FOR MOBILE SUPPORT
+		$("#btn-Download-Image").on('click', function () {
+			var imageData = getCanvas.toDataURL("image/png");
+			
+			// Check if we're on a mobile device (simple user agent check)
+			var isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+			
+			if (isMobile) {
+				// MOBILE FRIENDLY APPROACH: Open in new tab for long-press saving
+				var newWindow = window.open();
+				if (newWindow) {
+					// Success - show image in new tab with save instructions
+					newWindow.document.write('<html><head><title>Your Pwchin - Long press to save</title>');
+					newWindow.document.write('<meta name="viewport" content="width=device-width, initial-scale=1.0">');
+					newWindow.document.write('<style>body{margin:0;display:flex;justify-content:center;align-items:center;min-height:100vh;background:#f0f0f0;font-family:sans-serif;}');
+					newWindow.document.write('.container{text-align:center;padding:20px;}');
+					newWindow.document.write('img{max-width:100%;height:auto;border-radius:8px;box-shadow:0 4px 12px rgba(0,0,0,0.15);}');
+					newWindow.document.write('.instruction{margin-top:20px;color:#666;font-size:16px;}</style></head>');
+					newWindow.document.write('<body><div class="container">');
+					newWindow.document.write('<img src="' + imageData + '" alt="Your Pwchin" />');
+					newWindow.document.write('<div class="instruction">📱 Long press on the image to save it to your device</div>');
+					newWindow.document.write('</div></body></html>');
+					newWindow.document.close();
+				} else {
+					// Popup blocked - fallback to preview area
+					alert("Please allow popups or use this method: Long-press the generated image below to save");
+				}
+			} else {
+				// DESKTOP APPROACH: Traditional download link
+				var downloadLink = document.createElement('a');
+				downloadLink.href = imageData;
+				downloadLink.download = 'mypwchin.png';
+				document.body.appendChild(downloadLink);
+				downloadLink.click();
+				document.body.removeChild(downloadLink);
+			}
+		});
+		
+		// ADDED: Function to flip back to editor view (optional - can be triggered by another button)
+		$("#btn-Back-To-Editor").on('click', function () {
+			$("#showitgenerated").fadeOut(300, function() {
+				// Restore original editor content
+				var originalContent = '<div id="dxeditor" class="allitems">' + 
+									  '<!-- Your original editor content here -->' + 
+									  '</div>';
+				
+				// You might want to store the original HTML somewhere
+				// For now, we'll just show the canvas is removed
+				$('#showitgenerated').html('<div id="dxeditor" class="allitems">' + $('#dxeditor').html() + '</div>');
+				$("#showitgenerated").fadeIn(300);
+			});
+		});
+		
+	});
+	
 })(jQuery);
 
-function dodefault() {
-    $('.bodybio').css('background-image', 'url(img/b4.svg)');
-    $('.bodyoutfit').css('background-image', 'url(img/c4.svg)');
-    $('#dxeyes').css('background-image', 'url(img/anime.svg)');
-    $('#hairelement').css('background-image', 'url(img/hair18j.svg)');
-    $('#dxmouth').css('background-image', 'url(img/xm5.svg)');
-}
 
+
+$( "#tabs" ).tabs({
+  classes: {
+    "ui-tabs": "highlight",
+				//	active: 1
+  }
+});
+		
+
+// Head Style 1
+$(document).ready(function(){
+ $("input.hdp:checkbox").change(function(){
+$(".head").css('background-image','url('+ $(this).data("image")+')');
+$('input[type="checkbox"].hdp').not(this).prop('checked', false); 
+});
+});
+
+// Head Style 2 & 3
+$(document).ready(function(){
+ $("input.hdp:checkbox").change(function(){
+$(".head2").css('background-image','url('+ $(this).data("image")+')');
+$('input[type="checkbox"].hdp').not(this).prop('checked', false); 
+});
+});
+
+// Eyes
+$(document).ready(function(){
+ $("input.ey:checkbox").change(function(){
+$(".eyes").css('background-image','url('+ $(this).data("image")+')');
+$('input[type="checkbox"].ey').not(this).prop('checked', false); 
+});
+});
+
+// Mouth
+$(document).ready(function(){
+ $("input.mo:checkbox").change(function(){
+$(".mouth").css('background-image','url('+ $(this).data("image")+')');
+$('input[type="checkbox"].mo').not(this).prop('checked', false); 
+});
+});
+
+
+
+
+
+//Move Eyes Up/Down
+$('#eyeaxisy').on('input', e => $('.updown').css('transform',  'translateY( '+ $(e.target).val() + 'px )' ));
+//Move Mouth Up/Down - Left/Right
+$('#moaxisy').on('input', e => $('.updownmo').css('transform',  'translateY( '+ $(e.target).val() + 'px )' ));
+$('#moaxisx').on('input', e => $('#dxmouth').css('left', $(e.target).val() + 'px'));
+// Mouth Opacity 
+$('#domoopa').on('input', e => $('.dtrans').css('opacity', $(e.target).val()));
+
+//Move Eyes Left/Right
+$('#eyeaxisx').on('input', e => $('#dxeyes').css('left', $(e.target).val() + 'px'));
+
+
+//Move Hair Element Up/Down - Left/Right
+$('#hairy').on('input', e => $('.hairup').css('top', $(e.target).val() + 'px'));
+$('#hairx').on('input', e => $('#hairelement').css('left', $(e.target).val() + 'px'));
+
+// Glasses
+$(document).ready(function(){
+ $("input.gl:checkbox").change(function(){
+$(".glasses").css('background-image','url('+ $(this).data("image")+')');
+$('input[type="checkbox"].gl').not(this).prop('checked', false); 
+});
+});
+
+// Hair Styles
+$(document).ready(function(){
+ $("input.hr:checkbox").change(function(){
+$(".hair").css('background-image','url('+ $(this).data("image")+')');
+$('input[type="checkbox"].hr').not(this).prop('checked', false); 
+});
+});
+
+// Change Main Background
+$(document).ready(function(){
+ $("input.mbg:checkbox").change(function(){
+$(".bgmain").css('background-image','url('+ $(this).data("image")+')');
+$('input[type="checkbox"].mbg').not(this).prop('checked', false); 
+});
+});
+
+// Change Body Style Pwchin
+$(document).ready(function(){
+ $("input.bo:checkbox").change(function(){
+$(".bodybio").css('background-image','url('+ $(this).data("image")+')');
+$('input[type="checkbox"].bo').not(this).prop('checked', false);
+});
+});
+
+
+
+// Change Outfit
+$(document).ready(function(){
+ $("input.haine:checkbox").change(function(){
+$(".bodyoutfit").css('background-image','url('+ $(this).data("image")+')');
+$('input[type="checkbox"].haine').not(this).prop('checked', false); 
+});
+});
+
+
+// Change Items Hands
+$(document).ready(function(){
+ $("input.items:checkbox").change(function(){
+$(".handslot").css('background-image','url('+ $(this).data("image")+')');
+$('input[type="checkbox"].items').not(this).prop('checked', false); 
+});
+});
+
+// Change Items Hands
+$(document).ready(function(){
+ $("input.itemsbig:checkbox").change(function(){
+$(".biggeritems").css('background-image','url('+ $(this).data("image")+')');
+$('input[type="checkbox"].itemsbig').not(this).prop('checked', false); 
+});
+});
+
+// Change Pwchi Bg
+$(document).ready(function(){
+ $("input.pwchibg:checkbox").change(function(){
+$("#dxeditor").css('background-image','url('+ $(this).data("image")+')');
+$('input[type="checkbox"].pwchibg').not(this).prop('checked', false); 
+});
+});
+
+
+//Delete Text
+function dxdelete1() {
+	   var divs = document.querySelectorAll('#text1');
+ for (var i = 0; i < divs.length; i++) {
+    divs[i].classList.toggle('delete1');
+				$('#svgicon').toggleClass('rotate');
+ }};
+	//Remove Text Background color
+	function dxdelete2() {
+	   var divs = document.querySelectorAll('.thetext');
+ for (var i = 0; i < divs.length; i++) {
+    divs[i].classList.toggle('rembg');
+				$('#svgicon2').toggleClass('rotate');
+ }};
+
+function dxsubmitTxt() {
+	var text1 = $("#myText1").val() || '<br>';
+	$("#text1").html(text1);
+};
+//Change Font Color
+$('#textcolor').on('input', e => $('#text1').css('color', $(e.target).val() ));
+//Change Font Background color
+$('#textbg').on('input', e => $('.thetext').css('background-color', $(e.target).val() ));
+//Text position
+$('#txtposy').on('input', e => $('#text1').css('transform',  'translateY( '+ $(e.target).val() +'px )' ));
+
+// Change Font Size
+$('#slider').on('input', e => $('#text1').css('font-size', $(e.target).val() + 'em'));
+// Change Font
+var dxfontArray = [
+// Font 1 Default
+'-apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica Neue, Arial, sans-serif, Apple Color Emoji, Segoe UI Emoji, Segoe UI Symbol',
+// Font 2
+'Bebas Neue',
+// Font 3
+'Oswald',
+// Font 4
+'Gemunu Libre',
+// Font 5
+'Audiowide',
+// Font 6
+'Goldman',
+// Font 7
+'Pirata One',
+// Font 8
+'Play',
+// Font 9
+'Cinzel Decorative',
+// Font 10
+'Comforter Brush',
+// Font 11
+'Great Vibes',
+// Font 12
+'Lobster Two',
+// Font 13
+'Zilla Slab Highlight'
+]
+ $('#framechangefont').on('change', function(){
+    value = $(this).val() - 1;
+   $('#text1').css({'font-family':'' + dxfontArray[value] + ''});
+			
+});
+
+
+// Change Text Background Graphic
+var dxframeArray = [
+// 1 Empty
+'img/empty.svg',
+'img/items/1bgtxt.svg',
+'img/items/2bgtxt.svg',
+'img/items/3bgtxt.svg'
+]
+$('#framechangebg').on('change', function(){
+value = $(this).val() - 1;
+$('#text1').css({'background-image':'url(' + dxframeArray[value] + ')'});
+});
+//BG Opacity
+$('#icopa').on('input', e => $('.thetext').css('opacity', $(e.target).val()));
+
+
+//Change Text Size 1
+$('#xletter').on('input', e => $('#text1').css('letter-spacing', $(e.target).val() + 'px'));
+//Drag Elements
+$(function() {
+    $( ".dragit" ).draggable();
+});
+
+//Acordion
+$(function(){
+    $(".achead").accordion();
+  });
+$( ".achead" ).accordion({
+  icons: { "header": "ui-icon-plus", "activeHeader": "ui-icon-minus" },
+		active: [1]
+});
+
+// Do Daily Pwchin
+function dodefault() {
+ var divs = document.querySelectorAll('.dailypwchin');
+ for (var i = 0; i < divs.length; i++) {
+    divs[i].classList.toggle('doshow');
+				$('.bodybio').css('background-image', 'url(img/b4.svg)');
+				$('.bodyoutfit').css('background-image', 'url(img/c4.svg)');
+				$('#dxeyes').css('background-image', 'url(img/anime.svg)');
+				$('#hairelement').css('background-image', 'url(img/hair18j.svg)');
+				$('#dxmouth').css('background-image', 'url(img/xm5.svg)');
+				$('#glasses').css('background-image', 'url(img/gl2.svg)');
+				$('.handslot').css('background-image', 'url(img/items/newsp.svg)');
+
+}};	
+
+// Do Revert to Default
 function backtozero() {
-    $('.bodybio').css('background-image', 'url(img/b1.svg)');
-    $('#dxeyes').css('background-image', 'url(img/eyes.svg)');
-    $('#dxmouth').css('background-image', 'url(img/mo1.svg)');
-    $('#text1').empty();
-}
+ var divs = document.querySelectorAll('.dailypwchin');
+ for (var i = 0; i < divs.length; i++) {
+    divs[i].classList.toggle('doshow');
+				$('.bodybio').css('background-image', 'url(img/b1.svg)');
+				$('.head').css('background-image', 'url(img/head.svg)');
+				$('.bodyoutfit').css('background-image', 'url(img/o04.svg)');
+				$('#dxeyes').css('background-image', 'url(img/eyes.svg)');
+				$('#hairelement').css('background-image', 'url(img/hair.svg)');
+				$('#dxmouth').css('background-image', 'url(img/mo1.svg)');
+				$('#glasses').css('background-image', 'url(img/empty.svg)');
+				$('.handslot').css('background-image', 'url(img/empty.svg)');
+				$('#txtbg').css('background-image', 'url(img/empty.svg)');
+				$('.sideleft').css('background-image', 'url(img/empty.svg)');
+				$('.sideright').css('background-image', 'url(img/empty.svg)');
+				$('#theitems').css('background-image', 'url(img/empty.svg)');
+				$('#dxeditor').css('background-image', 'url(img/empty.svg)');
+				$('#text1').remove();
+
+}};	
+
+//Editor Preview
+	$("#vieweditor").on('click',function(){
+			 $("#bgmain").addClass("dohighlight");
+       setTimeout(function() {
+            $("#bgmain").removeClass("dohighlight");
+        }, 5700);
+	});
+	
+	//Main Buttons
+	$("#mainbuttons").on('click',function(){
+			 $("#editorbuttons").addClass("dohighlight");
+       setTimeout(function() {
+            $("#editorbuttons").removeClass("dohighlight");
+        }, 5700);
+	});
+	
+		//Save and Delete
+	$("#savedelete").on('click',function(){
+			 $("#clear").addClass("dohighlight");
+       setTimeout(function() {
+            $("#clear").removeClass("dohighlight");
+        }, 5700);
+	});
+	
+		//Editor Library
+	$("#editorlibrary").on('click',function(){
+			 $("#tabs").addClass("dohighlight");
+       setTimeout(function() {
+            $("#tabs").removeClass("dohighlight");
+        }, 5700);
+	});
+	
+	//The Backgrounds
+	$("#bgenvchange").on('click',function(){
+			 $("#cgcoptions").addClass("dohighlight");
+       setTimeout(function() {
+            $("#cgcoptions").removeClass("dohighlight");
+        }, 5700);
+	});
+	
+	//Output
+	$("#renderpwchin").on('click',function(){
+			 $("#renderitcool").addClass("dohighlight");
+       setTimeout(function() {
+            $("#renderitcool").removeClass("dohighlight");
+        }, 5700);
+	});
+				
+	//Toggle Stand On/Off	
+		$("#showstand").click(function() {
+  $("#stand").toggleClass("on");
+});
+
+//CLEAR canvas
+$( "#clear" ).click(function() {
+  $("canvas" ).fadeOut( "slow", function() {
+    $('canvas').remove();
+  });
+});
+	
+	
+	
 </script>
 
 	
 </body>
 </html>
+
 
 
 
