@@ -22,6 +22,35 @@
 
 .editor-view.active-view { display: block; }
 .generated-view.active-view { display: block; }
+
+
+/* Add these styles to your CSS */
+#dxeditor {
+  display: block;
+}
+
+#generated-view {
+  display: none;
+}
+
+/* When views are active */
+#dxeditor.active-view {
+  display: block;
+}
+
+#generated-view.active-view {
+  display: block;
+}
+
+/* Hide the other */
+#dxeditor:not(.active-view) {
+  display: none;
+}
+
+#generated-view:not(.active-view) {
+  display: none;
+}
+		
 		
 	</style>
 </head>
@@ -51,7 +80,7 @@ Try not to mess things up because I'm not a developer.
 <div id="stand" class="stand off"><span class="pwchi" title="I have created wonderful PNG">PWCHI</span></div>
 <!-- Start Flip --->
       <span id="showitgenerated">
-		  <div id="dxeditor" style="display:block;width:350px;height:480px;margin:60px auto 20px auto;box-sizing:border-box;text-align:center;background-color:transparent;overflow:hidden;position:relative;filter:drop-shadow(0 2px 7px rgba(0,0,0,.0));zindex:10;padding-top:0;background-image:url('img/empty.svg');background-repeat:no-repeat;background-size:350px 480px;background-position:0 8px;" class="show editor-view active-view">
+		  <div id="dxeditor" style="display:block;width:350px;height:480px;margin:60px auto 20px auto;box-sizing:border-box;text-align:center;background-color:transparent;overflow:hidden;position:relative;filter:drop-shadow(0 2px 7px rgba(0,0,0,.0));zindex:10;padding-top:0;background-image:url('img/empty.svg');background-repeat:no-repeat;background-size:350px 480px;background-position:0 8px;" class="show active-view">
 						
 						<div class="dxbody" style="display:block;width:350px;height:450px;margin:0 auto -300px auto;transform: translateY(0);z-index:2;">
 						  <div class="bodybio dailypwchin" style="display:block;width:350px;height:450px;margin:0 auto -450px auto;transform: translateY(0);z-index:3;background-image:url('img/b1.svg');background-repeat:no-repeat;background-size:350px 450px;background-position:0 0;"></div>
@@ -87,13 +116,13 @@ Try not to mess things up because I'm not a developer.
       </div>
 
 
-<!-- Generated View (hidden by default) -->
-  <div id="generated-view" style="display: none;">
+
+  <!-- Generated View (hidden by default) -->
+  <div id="generated-view">
     <div id="previewImage" class="outputimage"></div>
     <button id="btn-Download-Image">Download Image</button>
     <button id="btn-Back-To-Editor">← Back to Editor</button>
   </div>
-
 		  
 	  </span>
 		<!-- end flip -->				
@@ -1517,30 +1546,34 @@ else { password.setSelectionRange(0, password.value.length);document.getElementB
 	}
 
 	// Generate and Flip functionality
-	$("#btn-Preview-Image").on('click', function () {
-	  html2canvas(element, {
-		onrendered: function (canvas) {
-		  // Store the canvas globally
-		  getCanvas = canvas;
-		  
-		  // Clear preview area and append the NEW canvas
-		  $("#previewImage").empty().append(canvas);
-		  
-		  // FLIP TO GENERATED VIEW
-		  $("#dxeditor").hide();
-		  $("#generated-view").show();
-		  
-		  // Make sure download button works with this canvas
-		  setupDownloadButton();
-		}
-	  });
-	});
+// Generate and Flip functionality
+$("#btn-Preview-Image").on('click', function () {
+  html2canvas(element, {
+    onrendered: function (canvas) {
+      // Store the canvas globally
+      getCanvas = canvas;
+      
+      // Clear preview area and append the NEW canvas
+      $("#previewImage").empty().append(canvas);
+      
+      // FLIP TO GENERATED VIEW using classes
+      $("#dxeditor").removeClass('active-view');
+      $("#generated-view").addClass('active-view');
+      
+      // Make sure download button works with this canvas
+      setupDownloadButton();
+    }
+  });
+});
 
-	// Back button functionality
-	$("#btn-Back-To-Editor").on('click', function() {
-	  $("#generated-view").hide();
-	  $("#dxeditor").show();
-	});
+// Back button functionality
+$("#btn-Back-To-Editor").on('click', function() {
+  $("#generated-view").removeClass('active-view');
+  $("#dxeditor").addClass('active-view');
+});
+
+
+		
 
 	// Initialize download button
 	setupDownloadButton();
@@ -1870,6 +1903,7 @@ $( "#clear" ).click(function() {
 	
 </body>
 </html>
+
 
 
 
