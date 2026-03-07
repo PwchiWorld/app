@@ -15,31 +15,18 @@
 	<style>
 		.row:before,.row:after{content:"";display:inline-table;clear:both;}
 
-/* Add these styles to your CSS */
+/* Hide class for proper swapping */
+.noshow {
+  display: none !important;
+}
+
+/* Default states */
 #dxeditor {
   display: block;
 }
 
 #generated-view {
-  display: none;
-}
-
-/* When views are active */
-#dxeditor.active-view {
   display: block;
-}
-
-#generated-view.active-view {
-  display: block;
-}
-
-/* Hide the other */
-#dxeditor:not(.active-view) {
-  display: none;
-}
-
-#generated-view:not(.active-view) {
-  display: none;
 }
 	</style>
 </head>
@@ -69,7 +56,7 @@ Try not to mess things up because I'm not a developer.
 <div id="stand" class="stand off"><span class="pwchi" title="I have created wonderful PNG">PWCHI</span></div>
 <!-- Start Flip --->
       <span id="showitgenerated">
-		  <div id="dxeditor" style="display:block;width:350px;height:480px;margin:60px auto 20px auto;box-sizing:border-box;text-align:center;background-color:transparent;overflow:hidden;position:relative;filter:drop-shadow(0 2px 7px rgba(0,0,0,.0));zindex:10;padding-top:0;background-image:url('img/empty.svg');background-repeat:no-repeat;background-size:350px 480px;background-position:0 8px;" class="showE active-view">
+		  <div id="dxeditor" style="display:block;width:350px;height:480px;margin:60px auto 20px auto;box-sizing:border-box;text-align:center;background-color:transparent;overflow:hidden;position:relative;filter:drop-shadow(0 2px 7px rgba(0,0,0,.0));zindex:10;padding-top:0;background-image:url('img/empty.svg');background-repeat:no-repeat;background-size:350px 480px;background-position:0 8px;" class="showE active-viewX">
 						
 						<div class="dxbody" style="display:block;width:350px;height:450px;margin:0 auto -300px auto;transform: translateY(0);z-index:2;">
 						  <div class="bodybio dailypwchin" style="display:block;width:350px;height:450px;margin:0 auto -450px auto;transform: translateY(0);z-index:3;background-image:url('img/b1.svg');background-repeat:no-repeat;background-size:350px 450px;background-position:0 0;"></div>
@@ -108,7 +95,7 @@ Try not to mess things up because I'm not a developer.
 
 
  <!-- Generated View (hidden by default) -->
-<div id="generated-view">
+  <div id="generated-view" class="noshow">
     <div id="previewImage" class="outputimage"></div>
     <button id="btn-Download-Image">Download Image</button>
     <button id="btn-Back-To-Editor">← Back to Editor</button>
@@ -1465,7 +1452,7 @@ else { password.setSelectionRange(0, password.value.length);document.getElementB
 	var element = $("#dxeditor");
 	var getCanvas; // global variable
 
-	// Function to handle download (mobile friendly)
+	// Function to handle download (WORKS ON ALL DEVICES)
 	function setupDownloadButton() {
 	  $("#btn-Download-Image").off('click').on('click', function () {
 		if (!getCanvas) {
@@ -1473,70 +1460,85 @@ else { password.setSelectionRange(0, password.value.length);document.getElementB
 		  return;
 		}
 		
-		var imageData = getCanvas.toDataURL("image/png");
-		var isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+		// Show loading state
+		$(this).text('Processing...');
 		
-		if (isMobile) {
-		  // Mobile: Open in new tab for long-press saving
-		  var newWindow = window.open();
-		  if (newWindow) {
-			newWindow.document.write(`
-			  <html>
-				<head>
-				  <title>Your Pwchin</title>
-				  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-				  <style>
-					body { 
-					  margin: 0; 
-					  display: flex; 
-					  justify-content: center; 
-					  align-items: center; 
-					  min-height: 100vh; 
-					  background: #333;
-					  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-					}
-					.container {
-					  text-align: center;
-					  padding: 20px;
-					}
-					img { 
-					  max-width: 100%; 
-					  height: auto; 
-					  border-radius: 12px;
-					  box-shadow: 0 8px 24px rgba(0,0,0,0.5);
-					}
-					.instructions {
-					  margin-top: 20px;
-					  color: white;
-					  background: rgba(0,0,0,0.8);
-					  padding: 15px 25px;
-					  border-radius: 30px;
-					  font-size: 16px;
-					  display: inline-block;
-					}
-				  </style>
-				</head>
-				<body>
-				  <div class="container">
-					<img src="${imageData}" alt="Your Pwchin" />
-					<div class="instructions">📱 Long press image to save</div>
-				  </div>
-				</body>
-			  </html>
-			`);
-			newWindow.document.close();
-		  } else {
-			alert("📱 Long press on the image below to save it to your device");
-		  }
-		} else {
-		  // Desktop: Direct download
-		  var downloadLink = document.createElement('a');
-		  downloadLink.href = imageData;
-		  downloadLink.download = 'mypwchin.png';
-		  document.body.appendChild(downloadLink);
-		  downloadLink.click();
-		  document.body.removeChild(downloadLink);
-		}
+		// Convert canvas to blob for better mobile support
+		getCanvas.toBlob(function(blob) {
+		  var url = URL.createObjectURL(blob);
+		  var link = document.createElement('a');
+		  link.href = url;
+		  link.download = 'mypwchin.png';
+		  
+		  // For mobile, make sure it's visible and triggered properly
+		  link.style.position = 'absolute';
+		  link.style.left = '-9999px';
+		  document.body.appendChild(link);
+		  
+		  // Trigger click
+		  link.click();
+		  
+		  // Clean up
+		  setTimeout(function() {
+			document.body.removeChild(link);
+			URL.revokeObjectURL(url);
+			$("#btn-Download-Image").text('Download Image');
+		  }, 1000);
+		  
+		  // Mobile fallback: if download didn't work, open in new tab
+		  setTimeout(function() {
+			if (navigator.userAgent.match(/iPhone|iPad|iPod|Android/i)) {
+			  var newWindow = window.open('about:blank', '_blank');
+			  if (newWindow) {
+				newWindow.document.write(`
+				  <html>
+					<head>
+					  <title>Your Pwchin</title>
+					  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+					  <style>
+						body { 
+						  margin: 0; 
+						  display: flex; 
+						  justify-content: center; 
+						  align-items: center; 
+						  min-height: 100vh; 
+						  background: #333;
+						  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+						}
+						.container {
+						  text-align: center;
+						  padding: 20px;
+						}
+						img { 
+						  max-width: 100%; 
+						  height: auto; 
+						  border-radius: 12px;
+						  box-shadow: 0 8px 24px rgba(0,0,0,0.5);
+						}
+						.instructions {
+						  margin-top: 20px;
+						  color: white;
+						  background: rgba(0,0,0,0.8);
+						  padding: 15px 25px;
+						  border-radius: 30px;
+						  font-size: 16px;
+						  display: inline-block;
+						}
+					  </style>
+					</head>
+					<body>
+					  <div class="container">
+						<img src="${URL.createObjectURL(blob)}" alt="Your Pwchin" />
+						<div class="instructions">📱 Long press image → Save</div>
+					  </div>
+					</body>
+				  </html>
+				`);
+			  }
+			}
+		  }, 1500);
+		  
+		}, 'image/png');
 	  });
 	}
 
@@ -1550,9 +1552,9 @@ else { password.setSelectionRange(0, password.value.length);document.getElementB
 		  // Clear preview area and append the NEW canvas
 		  $("#previewImage").empty().append(canvas);
 		  
-		  // FLIP TO GENERATED VIEW
-		  $("#dxeditor").hide();
-		  $("#generated-view").show();
+		  // PROPER SWAP: Hide editor, show generated view
+		  $("#dxeditor").addClass('noshow');
+		  $("#generated-view").removeClass('noshow');
 		  
 		  // Make sure download button works with this canvas
 		  setupDownloadButton();
@@ -1562,8 +1564,12 @@ else { password.setSelectionRange(0, password.value.length);document.getElementB
 
 	// Back button functionality
 	$("#btn-Back-To-Editor").on('click', function() {
-	  $("#generated-view").hide();
-	  $("#dxeditor").show();
+	  // PROPER SWAP: Show editor, hide generated view
+	  $("#generated-view").addClass('noshow');
+	  $("#dxeditor").removeClass('noshow');
+	  
+	  // Reset download button text
+	  $("#btn-Download-Image").text('Download Image');
 	});
 
 	// Initialize download button
@@ -1889,10 +1895,11 @@ $( "#clear" ).click(function() {
   });
 });
 	
-</script>	
+</script>
 	
 </body>
 </html>
+
 
 
 
