@@ -1447,86 +1447,140 @@ else { password.setSelectionRange(0, password.value.length);document.getElementB
 <script>
 ;(function($){
 
-	var getCanvas; 
+	/**
+ * FINAL FUNCTIONAL FIX: Bypassing CORS Security Errors with Base64 Conversion
+ * This script ensures images are treated as "local" by converting them to Base64
+ * before html2canvas processes them, completely bypassing CORS restrictions.
+ */
 
-// 1. UPDATED PREVIEW FUNCTION (This is where the canvas is actually created)
-$("#btn-Preview-Image").off('click').on('click', function () {
-  var element = $("#dxeditor")[0]; // Ensure we get the DOM element
+var getCanvas; 
+
+// 1. HELPER: This function converts an image URL to a Base64 string.
+// This is the most reliable way to bypass CORS for canvas operations.
+function toBase64(url, callback) {
+  var xhr = new XMLHttpRequest();
+  xhr.onload = function() {
+    var reader = new FileReader();
+    reader.onloadend = function() {
+      callback(reader.result);
+    }
+    reader.readAsDataURL(xhr.response);
+  };
+  xhr.open("GET", url);
+  xhr.responseType = "blob";
+  xhr.send();
+}
+
+// 2. UPDATED PREVIEW FUNCTION: Forces images to be CORS-friendly via Base64
+$("#btn-Preview-Image").off("click").on("click", function () {
+  var $btn = $(this);
+  var element = $("#dxeditor");
   
-  // Show loading state on preview button if you want
-  $(this).text('Generating...');
+  $btn.text("Generating...").prop("disabled", true);
 
-  html2canvas(element, {
-    useCORS: true,          // CRITICAL: Allows images from other domains (like GitHub)
-    allowTaint: true,       // Allows the canvas to be "tainted" by cross-origin images
-    logging: false,
-    onrendered: function (canvas) {
-      getCanvas = canvas;
-      
-      $("#previewImage").empty().append(canvas);
-      $("#dxeditor").addClass('noshow');
-      $("#generated-view").removeClass('noshow');
-      
-      $("#btn-Preview-Image").text('Preview Image'); // Reset text
-      setupDownloadButton(); // Re-bind download button
+  var images = element.find("img");
+  var imagesToProcess = images.length;
+  var processedImages = 0;
+
+  if (imagesToProcess === 0) {
+    // No images, proceed directly to html2canvas
+    generateCanvas();
+    return;
+  }
+
+  images.each(function() {
+    var $img = $(this);
+    var originalSrc = $img.attr("src");
+
+    // Only process if it's not already a data URL and not empty
+    if (originalSrc && !originalSrc.startsWith("data:")) {
+      toBase64(originalSrc, function(base64Img) {
+        $img.attr("src", base64Img);
+        processedImages++;
+        if (processedImages === imagesToProcess) {
+          generateCanvas();
+        }
+      });
+    } else {
+      processedImages++;
+      if (processedImages === imagesToProcess) {
+        generateCanvas();
+      }
     }
   });
+
+  function generateCanvas() {
+    html2canvas(element[0], {
+      useCORS: false, // Not needed as images are now Base64
+      allowTaint: false, // Not needed as images are now Base64
+      logging: false,
+      onrendered: function (canvas) {
+        getCanvas = canvas;
+        
+        $("#previewImage").empty().append(canvas);
+        $("#dxeditor").addClass("noshow");
+        $("#generated-view").removeClass("noshow");
+        
+        $btn.text("Preview Image").prop("disabled", false);
+        setupDownloadButton();
+      }
+    });
+  }
 });
 
-// 2. UPDATED DOWNLOAD FUNCTION
+// 3. UPDATED DOWNLOAD FUNCTION: Handles mobile saving reliably
 function setupDownloadButton() {
-  $("#btn-Download-Image").off('click').on('click', function () {
+  $("#btn-Download-Image").off("click").on("click", function () {
     if (!getCanvas) {
       alert("Please generate an image first");
       return;
     }
     
     var $btn = $(this);
-    $btn.text('Processing...').prop('disabled', true);
+    $btn.text("Processing...").prop("disabled", true);
 
     try {
-      // Use toDataURL as a more compatible fallback for older mobile browsers
-      // if toBlob fails or is restricted.
+      // Generate the image data (now guaranteed not to be tainted)
       var imgData = getCanvas.toDataURL("image/png");
       
       if (!imgData || imgData === "data:,") {
-        throw new Error("Canvas is empty or tainted");
+        throw new Error("Canvas is empty after rendering.");
       }
 
       var isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
 
       if (isMobile) {
-        // For mobile, opening a new tab with the image is the ONLY 100% reliable way
+        // MOBILE: Open in a new tab for manual save (Long-press)
         var newWin = window.open();
         if (newWin) {
           newWin.document.write(`
             <html>
-              <body style="margin:0;display:flex;flex-direction:column;align-items:center;justify-content:center;background:#111;color:white;font-family:sans-serif;">
-                <img src="${imgData}" style="max-width:90%;border-radius:10px;box-shadow:0 5px 20px rgba(0,0,0,0.5);margin-bottom:20px;"/>
-                <div style="padding:15px 25px;background:#333;border-radius:50px;">📱 Long press image to Save</div>
+              <head><meta name="viewport" content="width=device-width, initial-scale=1.0"></head>
+              <body style="margin:0;display:flex;flex-direction:column;align-items:center;justify-content:center;background:#111;color:white;font-family:sans-serif;text-align:center;">
+                <img src="${imgData}" style="max-width:95%;border-radius:12px;box-shadow:0 10px 30px rgba(0,0,0,0.5);margin-bottom:20px;"/>
+                <div style="padding:15px 30px;background:#333;border-radius:50px;font-weight:bold;">📱 Long press image to Save</div>
+                <button onclick="window.close()" style="margin-top:30px;background:none;border:1px solid #555;color:#888;padding:10px 20px;border-radius:5px;">Close</button>
               </body>
             </html>
           `);
         } else {
-          // If popup blocked, try direct redirect
+          // Fallback if popup blocked: Direct replacement (User can still long-press)
           window.location.href = imgData;
         }
       } else {
-        // Desktop download
-        var link = document.createElement('a');
+        // DESKTOP: Standard download
+        var link = document.createElement("a");
         link.href = imgData;
-        link.download = 'mypwchin.png';
+        link.download = "mypwchin.png";
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);
       }
     } catch (e) {
-      console.error(e);
-      // If toDataURL fails (usually due to CORS/Taint), we try to alert the user 
-      // but this usually means the images themselves need 'crossorigin="anonymous"' in HTML
-      alert("Security error: Images from different domains are blocking the download. Make sure your <img> tags have crossorigin='anonymous' or are hosted on the same domain.");
+      console.error("Download Error:", e);
+      alert("An error occurred during download preparation: " + e.message + ". Please try again.");
     } finally {
-      $btn.text('Download Image').prop('disabled', false);
+      $btn.text("Download Image").prop("disabled", false);
     }
   });
 }
@@ -1850,6 +1904,7 @@ $( "#clear" ).click(function() {
 	
 </body>
 </html>
+
 
 
 
