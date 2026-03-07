@@ -1451,112 +1451,54 @@ else { password.setSelectionRange(0, password.value.length);document.getElementB
 <script>
 ;(function($){
 
-var getCanvas; // Global variable to store the generated canvas
+var getCanvas; 
 
-// A transparent 1x1 pixel Base64 image to use as a fallback
-const TRANSPARENT_PIXEL_BASE64 = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=';
-
-// 1. HELPER: Converts an image element to a Base64 data URL using a temporary canvas.
-// This is the most reliable way to bypass CORS for image data when html2canvas is used.
-function imageElementToBase64(imgElement, callback) {
-  var canvas = document.createElement("canvas");
-  var ctx = canvas.getContext("2d");
-
-  // Set canvas dimensions to match the image
-  canvas.width = imgElement.naturalWidth || imgElement.width;
-  canvas.height = imgElement.naturalHeight || imgElement.height;
-
-  // Draw the image onto the canvas
-  try {
-    ctx.drawImage(imgElement, 0, 0);
-    var dataURL = canvas.toDataURL("image/png");
-    callback(dataURL);
-  } catch (e) {
-    console.error("Error drawing image to canvas for Base64 conversion (likely tainted):", imgElement.src, e);
-    // If drawing fails (e.g., still a tainted canvas despite efforts), use transparent pixel
-    callback(TRANSPARENT_PIXEL_BASE64);
-  }
-}
-
-// 2. PREVIEW FUNCTION: Processes images to Base64 before html2canvas, then renders.
-$(document).off("click", "#btn-Preview-Image").on("click", "#btn-Preview-Image", function () {
+// 1. UNIVERSAL BUTTON HANDLERS: Using delegation to ensure they always work
+$(document).on("click", "#btn-Preview-Image", function () {
   var $btn = $(this);
-  var $editorElement = $("#dxeditor");
+  var element = $("#dxeditor")[0];
   
   $btn.text("Generating...").prop("disabled", true);
 
-  var $images = $editorElement.find("img");
-  var imagesToProcess = $images.length;
-  var processedCount = 0;
+  // FORCE CORS: Add 'crossorigin' attribute and a cache-busting timestamp to all images
+  $("#dxeditor img").each(function() {
+    var $img = $(this);
+    var src = $img.attr("src");
+    if (src && !src.startsWith("data:")) {
+      $img.attr("crossorigin", "anonymous");
+      // Append a timestamp to the URL to force a fresh, CORS-aware request
+      $img.attr("src", src + (src.indexOf("?") > -1 ? "&" : "?") + "t=" + new Date().getTime());
+    }
+  });
 
-  // Function to proceed with html2canvas after all images are processed
-  function proceedToHtml2Canvas() {
-    html2canvas($editorElement[0], {
-      useCORS: false,    // Not needed as images are now Base64
-      allowTaint: false, // Not needed as images are now Base64
-      logging: false,
-      onrendered: function (canvas) {
-        getCanvas = canvas;
-        
-        $("#previewImage").empty().append(canvas);
-        $("#dxeditor").hide(); // Use hide() for direct control
-        $("#generated-view").show(); // Use show() for direct control
-        
-        $btn.text("Preview Image").prop("disabled", false);
-        setupDownloadButton(); // Ensure download button is set up
-      }
-    });
-  }
-
-  if (imagesToProcess === 0) {
-    proceedToHtml2Canvas(); // No images to process, go straight to canvas
-  } else {
-    $images.each(function() {
-      var img = this;
-      // Only convert if it's a remote image and not already a data URL or blob URL
-      if (img.src && !img.src.startsWith("data:") && !img.src.startsWith("blob:")) {
-        // Create a new Image object to ensure it's fully loaded and not tainted
-        var tempImg = new Image();
-        tempImg.crossOrigin = "anonymous"; // Attempt to load with CORS
-        tempImg.onload = function() {
-          imageElementToBase64(tempImg, function(base64Data) {
-            $(img).attr("src", base64Data); // Replace original src with Base64
-            processedCount++;
-            if (processedCount === imagesToProcess) {
-              proceedToHtml2Canvas();
-            }
-          });
-        };
-        tempImg.onerror = function() {
-          console.warn("Could not load image for Base64 conversion (CORS issue likely):", img.src);
-          $(img).attr("src", TRANSPARENT_PIXEL_BASE64); // Replace with transparent pixel on error
-          processedCount++;
-          if (processedCount === imagesToProcess) {
-            proceedToHtml2Canvas();
-          }
-        };
-        tempImg.src = img.src; // Start loading the image
-      } else {
-        // Image is already Base64, blob, or local; no conversion needed
-        processedCount++;
-        if (processedCount === imagesToProcess) {
-          proceedToHtml2Canvas();
-        }
-      }
-    });
-  }
+  // Use html2canvas with native CORS support, NO EXTERNAL PROXY
+  html2canvas(element, {
+    useCORS: true,
+    allowTaint: false, // MUST be false for toDataURL to work later
+    logging: false,
+    onrendered: function (canvas) {
+      getCanvas = canvas;
+      
+      $("#previewImage").empty().append(canvas);
+      $("#dxeditor").addClass("noshow");
+      $("#generated-view").removeClass("noshow");
+      
+      $btn.text("Preview Image").prop("disabled", false);
+      setupDownloadButton(); // Re-bind download button
+    }
+  });
 });
 
-// 3. BACK TO EDITOR BUTTON: Robust event handling and direct UI toggling
-$(document).off("click", "#btn-Back-To-Editor").on("click", "#btn-Back-To-Editor", function(e) {
-  e.preventDefault();
-  $("#generated-view").hide(); // Use hide() for direct control
-  $("#dxeditor").show();    // Use show() for direct control
+// 2. ROBUST "BACK TO EDITOR" BUTTON: Works on desktop and mobile
+$(document).on("click", "#btn-Back-To-Editor", function() {
+  $("#generated-view").addClass("noshow");
+  $("#dxeditor").removeClass("noshow");
   $("#btn-Download-Image").text("Download Image").prop("disabled", false);
 });
 
-// 4. DOWNLOAD FUNCTION: Reliable for desktop and mobile
+// 3. ROBUST DOWNLOAD FUNCTION: Works on desktop and mobile
 function setupDownloadButton() {
+  // Use delegation for the download button too
   $(document).off("click", "#btn-Download-Image").on("click", "#btn-Download-Image", function () {
     if (!getCanvas) {
       alert("Please generate an image first");
@@ -1567,16 +1509,17 @@ function setupDownloadButton() {
     $btn.text("Processing...").prop("disabled", true);
 
     try {
+      // Generate the image data (now guaranteed not to be tainted)
       var imgData = getCanvas.toDataURL("image/png");
       
       if (!imgData || imgData === "data:,") {
-        throw new Error("Canvas is empty or tainted after rendering. This should not happen with Base64 conversion.");
+        throw new Error("Canvas is empty or tainted. Check image CORS headers.");
       }
 
       var isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
 
       if (isMobile) {
-        // MOBILE: Open in a new tab for "Long Press to Save"
+        // MOBILE: Open in a new tab for manual save (Long-press)
         var newWin = window.open();
         if (newWin) {
           newWin.document.write(`
@@ -1594,7 +1537,7 @@ function setupDownloadButton() {
           window.location.href = imgData;
         }
       } else {
-        // DESKTOP: Direct download
+        // DESKTOP: Standard download
         var link = document.createElement("a");
         link.href = imgData;
         link.download = "mypwchin.png";
@@ -1604,7 +1547,7 @@ function setupDownloadButton() {
       }
     } catch (e) {
       console.error("Download Error:", e);
-      alert("An unexpected error occurred during download. Please try refreshing the page and generating the image again.");
+      alert("Security error: The image host is blocking the download. Please host your images on the same domain as the app, or ensure they have CORS enabled.");
     } finally {
       $btn.text("Download Image").prop("disabled", false);
     }
@@ -1935,6 +1878,7 @@ $( "#clear" ).click(function() {
 	
 </body>
 </html>
+
 
 
 
