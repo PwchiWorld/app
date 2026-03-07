@@ -1587,6 +1587,7 @@ else { password.setSelectionRange(0, password.value.length);document.getElementB
 
 	// Generate and Flip functionality
 // Generate and Flip functionality
+// Generate and Flip functionality
 $("#btn-Preview-Image").on('click', function () {
   html2canvas(element, {
     onrendered: function (canvas) {
@@ -1596,9 +1597,9 @@ $("#btn-Preview-Image").on('click', function () {
       // Clear preview area and append the NEW canvas
       $("#previewImage").empty().append(canvas);
       
-      // FLIP TO GENERATED VIEW using classes
-      $("#dxeditor").removeClass('active-view');
-      $("#generated-view").addClass('active-view');
+      // PROPER SWAP: Hide editor, show generated view
+      $("#dxeditor").addClass('noshow');
+      $("#generated-view").removeClass('noshow');
       
       // Make sure download button works with this canvas
       setupDownloadButton();
@@ -1608,10 +1609,10 @@ $("#btn-Preview-Image").on('click', function () {
 
 // Back button functionality
 $("#btn-Back-To-Editor").on('click', function() {
-  $("#generated-view").removeClass('active-view');
-  $("#dxeditor").addClass('active-view');
+  // PROPER SWAP: Show editor, hide generated view
+  $("#generated-view").addClass('noshow');
+  $("#dxeditor").removeClass('noshow');
 });
-
 
 		
 
@@ -1943,6 +1944,7 @@ $( "#clear" ).click(function() {
 	
 </body>
 </html>
+
 
 
 
