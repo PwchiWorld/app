@@ -4,14 +4,12 @@
 <meta charset="utf-8">
 <title>Pwchin Web App</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
-	<!--
+
 <script src="js/jquery-3.1.1.min.js"></script>
 	<script src="js/jquery-ui.js"></script>
-	<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 	<script src="js/app.js"></script>
-	-->
-	<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+
 
 <link rel="stylesheet" type="text/css" href="css/app.css"/>
 	<style>
@@ -1441,187 +1439,146 @@ else { password.setSelectionRange(0, password.value.length);document.getElementB
 <!--/ Main Wrapper --->
 
 
-
+<!--
 <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+-->
 <script>
 ;(function($){
     $(document).ready(function(){
-        // GLOBAL VARIABLES
-        var element = $("#dxeditor");
-        var getCanvas; 
-
-        // --- 1. CORE GENERATE & DOWNLOAD LOGIC ---
-
-        // Function to handle download (Mobile-Friendly)
-        function triggerDownload(canvas) {
-            var imageData = canvas.toDataURL("image/png");
-            var link = document.createElement('a');
-            link.href = imageData;
-            link.download = 'mypwchin.png';
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
+        
+        // 1. INITIALIZE UI COMPONENTS
+        if ($.isFunction($.fn.tabs)) {
+            $( "#tabs" ).tabs({ classes: { "ui-tabs": "highlight" } });
+        }
+        if ($.isFunction($.fn.draggable)) {
+            $( ".dragit" ).draggable();
+        }
+        if ($.isFunction($.fn.accordion)) {
+            $(".achead").accordion({
+                icons: { "header": "ui-icon-plus", "activeHeader": "ui-icon-minus" },
+                active: 1
+            });
         }
 
-        // Generate Image (The "Flip" Logic)
-        // This targets your button ID: renderpwchin
-        $("#renderpwchin").on('click', function () {
-            var targetElement = document.getElementById("dxeditor");
+        // 2. AVATAR CUSTOMIZATION LOGIC
+        const updatePart = (selector, checkboxClass) => {
+            $(`input.${checkboxClass}:checkbox`).change(function(){
+                $(selector).css('background-image', 'url(' + $(this).data("image") + ')');
+                $(`input[type="checkbox"].${checkboxClass}`).not(this).prop('checked', false); 
+            });
+        };
 
-            if (!targetElement) return;
+        updatePart(".head, .head2", "hdp");
+        updatePart(".eyes", "ey");
+        updatePart(".mouth", "mo");
+        updatePart(".glasses", "gl");
+        updatePart(".hair", "hr");
+        updatePart(".bgmain", "mbg");
+        updatePart(".bodybio", "bo");
+        updatePart(".bodyoutfit", "haine");
+        updatePart(".handslot", "items");
+        updatePart("#dxeditor", "pwchibg");
 
-            // Visual feedback
-            $("#renderitcool").addClass("dohighlight");
+        // Sliders
+        $('#eyeaxisy').on('input', e => $('.updown').css('transform', `translateY(${e.target.value}px)`));
+        $('#moaxisy').on('input', e => $('.updownmo').css('transform', `translateY(${e.target.value}px)`));
+        $('#moaxisx').on('input', e => $('#dxmouth').css('left', e.target.value + 'px'));
+        $('#domoopa').on('input', e => $('.dtrans').css('opacity', e.target.value));
+        $('#eyeaxisx').on('input', e => $('#dxeyes').css('left', e.target.value + 'px'));
+        $('#hairy').on('input', e => $('.hairup').css('top', e.target.value + 'px'));
+        $('#hairx').on('input', e => $('#hairelement').css('left', e.target.value + 'px'));
 
-            // Capture the element WHILE it is visible to avoid "not attached" error
-            html2canvas(targetElement, {
+        // 3. GENERATE & DOWNLOAD (THE FIX)
+        let finalCanvas = null;
+
+        $("#renderpwchin").on('click', function() {
+            const editor = document.getElementById('dxeditor');
+            if(!editor) return alert("Editor not found");
+
+            // Feedback
+            $("#renderitcool").addClass("dohighlight").show().html("<p style='color:white;'>Generating... Please wait.</p>");
+            
+            // Fix: Scroll to top before capture (html2canvas quirk)
+            window.scrollTo(0,0);
+
+            html2canvas(editor, {
                 useCORS: true,
                 allowTaint: true,
-                scale: 2, 
+                scale: 2,
+                logging: false,
                 backgroundColor: null
-            }).then(function(canvas) {
-                getCanvas = canvas;
+            }).then(canvas => {
+                finalCanvas = canvas;
                 
-                // 1. Show the preview container and add the canvas
-                $("#renderitcool").empty().append(canvas).show();
-                
-                // 2. NOW flip the UI: Hide the editor
-                $("#dxeditor").hide(); 
-                
-                // 3. Create or show the download/back buttons
+                // Switch UI: Hide Editor, Show Image
+                $("#dxeditor").hide();
+                $("#renderitcool").empty().append(canvas).removeClass("dohighlight");
+
+                // Add buttons if missing
                 if ($("#dl-group").length === 0) {
                     $("#renderitcool").after(`
-                        <div id="dl-group" style="text-align:center; margin-top:15px; padding-bottom:30px;">
-                            <button id="downloadPng" style="padding:12px 25px; background:#ff8c00; color:#fff; border:none; border-radius:5px; font-weight:bold; cursor:pointer;">DOWNLOAD PNG</button>
-                            <button id="editAgain" style="padding:12px 25px; background:#333; color:#fff; border:none; border-radius:5px; margin-left:10px; cursor:pointer;">BACK TO EDITOR</button>
+                        <div id="dl-group" style="text-align:center; margin-top:20px; padding-bottom:40px;">
+                            <button id="downloadBtn" style="padding:15px 30px; background:#ff8c00; color:white; border:none; border-radius:10px; font-weight:bold;">SAVE IMAGE</button>
+                            <button id="backBtn" style="padding:15px 30px; background:#333; color:white; border:none; border-radius:10px; margin-left:10px;">EDIT AGAIN</button>
                         </div>
                     `);
                 } else {
                     $("#dl-group").show();
                 }
-                $("#renderitcool").removeClass("dohighlight");
-            }).catch(function(err) {
-                console.error("html2canvas error:", err);
+            }).catch(err => {
+                console.error("Render failed:", err);
+                alert("Failed to generate image. Ensure all images allow CORS.");
             });
         });
 
-        // Event delegation for dynamic buttons (needed because they are added later)
-        $(document).on('click', '#downloadPng', function() {
-            if (getCanvas) triggerDownload(getCanvas);
+        // Use Delegation for buttons
+        $(document).on('click', '#downloadBtn', function() {
+            if(!finalCanvas) return;
+            const link = document.createElement('a');
+            link.href = finalCanvas.toDataURL("image/png");
+            link.download = 'pwchin-avatar.png';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
         });
 
-        $(document).on('click', '#editAgain', function() {
-            $("#renderitcool").hide();
-            $("#dl-group").hide();
+        $(document).on('click', '#backBtn', function() {
+            $("#renderitcool, #dl-group").hide();
             $("#dxeditor").show();
         });
 
-        // --- 2. ORIGINAL EDITOR LOGIC (Preserved) ---
-
-        // Fix for the "tabs is not a function" error
-        if ($.isFunction($.fn.tabs)) {
-            $( "#tabs" ).tabs({ classes: { "ui-tabs": "highlight" } });
-        }
-
-        // Avatar Part Selection
-        $("input.hdp:checkbox").change(function(){
-            $(".head, .head2").css('background-image','url('+ $(this).data("image")+')');
-            $('input[type="checkbox"].hdp').not(this).prop('checked', false); 
-        });
-
-        $("input.ey:checkbox").change(function(){
-            $(".eyes").css('background-image','url('+ $(this).data("image")+')');
-            $('input[type="checkbox"].ey').not(this).prop('checked', false); 
-        });
-
-        $("input.mo:checkbox").change(function(){
-            $(".mouth").css('background-image','url('+ $(this).data("image")+')');
-            $('input[type="checkbox"].mo').not(this).prop('checked', false); 
-        });
-
-        // Sliders & Positioning
-        $('#eyeaxisy').on('input', e => $('.updown').css('transform', 'translateY( '+ $(e.target).val() + 'px )' ));
-        $('#moaxisy').on('input', e => $('.updownmo').css('transform', 'translateY( '+ $(e.target).val() + 'px )' ));
-        $('#moaxisx').on('input', e => $('#dxmouth').css('left', $(e.target).val() + 'px'));
-        $('#domoopa').on('input', e => $('.dtrans').css('opacity', $(e.target).val()));
-        $('#eyeaxisx').on('input', e => $('#dxeyes').css('left', $(e.target).val() + 'px'));
-        $('#hairy').on('input', e => $('.hairup').css('top', $(e.target).val() + 'px'));
-        $('#hairx').on('input', e => $('#hairelement').css('left', $(e.target).val() + 'px'));
-
-        // Styles, Items & Backgrounds
-        $("input.gl:checkbox").change(function(){
-            $(".glasses").css('background-image','url('+ $(this).data("image")+')');
-            $('input[type="checkbox"].gl').not(this).prop('checked', false); 
-        });
-        $("input.hr:checkbox").change(function(){
-            $(".hair").css('background-image','url('+ $(this).data("image")+')');
-            $('input[type="checkbox"].hr').not(this).prop('checked', false); 
-        });
-        $("input.mbg:checkbox").change(function(){
-            $(".bgmain").css('background-image','url('+ $(this).data("image")+')');
-            $('input[type="checkbox"].mbg').not(this).prop('checked', false); 
-        });
-        $("input.bo:checkbox").change(function(){
-            $(".bodybio").css('background-image','url('+ $(this).data("image")+')');
-            $('input[type="checkbox"].bo').not(this).prop('checked', false);
-        });
-        $("input.haine:checkbox").change(function(){
-            $(".bodyoutfit").css('background-image','url('+ $(this).data("image")+')');
-            $('input[type="checkbox"].haine').not(this).prop('checked', false); 
-        });
-        $("input.items:checkbox").change(function(){
-            $(".handslot").css('background-image','url('+ $(this).data("image")+')');
-            $('input[type="checkbox"].items').not(this).prop('checked', false); 
-        });
-        $("input.pwchibg:checkbox").change(function(){
-            $("#dxeditor").css('background-image','url('+ $(this).data("image")+')');
-            $('input[type="checkbox"].pwchibg').not(this).prop('checked', false); 
-        });
-
-        // Text Controls
+        // 4. MISC CONTROLS
         window.dxsubmitTxt = function() {
-            var text1 = $("#myText1").val() || '<br>';
-            $("#text1").html(text1);
+            $("#text1").html($("#myText1").val() || '<br>');
         };
-        $('#textcolor').on('input', e => $('#text1').css('color', $(e.target).val() ));
-        $('#textbg').on('input', e => $('.thetext').css('background-color', $(e.target).val() ));
-        $('#txtposy').on('input', e => $('#text1').css('transform', 'translateY( '+ $(e.target).val() +'px )' ));
-        $('#slider').on('input', e => $('#text1').css('font-size', $(e.target).val() + 'em'));
-
-        // Dragging & UI Feedback
-        if ($.isFunction($.fn.draggable)) { $( ".dragit" ).draggable(); }
-        
-        $("#showstand").click(function() { $("#stand").toggleClass("on"); });
-        $( "#clear" ).click(function() { $("canvas").fadeOut("slow", function() { $(this).remove(); }); });
+        $('#textcolor').on('input', e => $('#text1').css('color', e.target.value));
+        $('#textbg').on('input', e => $('.thetext').css('background-color', e.target.value));
+        $('#slider').on('input', e => $('#text1').css('font-size', e.target.value + 'em'));
+        $("#showstand").click(() => $("#stand").toggleClass("on"));
     });
 })(jQuery);
 
-// Global Helper Functions
 function dodefault() {
     $('.bodybio').css('background-image', 'url(img/b4.svg)');
     $('.bodyoutfit').css('background-image', 'url(img/c4.svg)');
     $('#dxeyes').css('background-image', 'url(img/anime.svg)');
     $('#hairelement').css('background-image', 'url(img/hair18j.svg)');
     $('#dxmouth').css('background-image', 'url(img/xm5.svg)');
-    $('#glasses').css('background-image', 'url(img/gl2.svg)');
-    $('.handslot').css('background-image', 'url(img/items/newsp.svg)');
 }
 
 function backtozero() {
     $('.bodybio').css('background-image', 'url(img/b1.svg)');
-    $('.head').css('background-image', 'url(img/head.svg)');
-    $('.bodyoutfit').css('background-image', 'url(img/o04.svg)');
     $('#dxeyes').css('background-image', 'url(img/eyes.svg)');
-    $('#hairelement').css('background-image', 'url(img/hair.svg)');
     $('#dxmouth').css('background-image', 'url(img/mo1.svg)');
-    $('#glasses, .handslot, #txtbg, .sideleft, .sideright, #theitems, #dxeditor').css('background-image', 'url(img/empty.svg)');
     $('#text1').empty();
 }
 </script>
+
 	
 </body>
 </html>
+
 
 
 
