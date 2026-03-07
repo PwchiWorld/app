@@ -6,13 +6,14 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 	<!--
 <script src="js/jquery-3.1.1.min.js"></script>
-	-->
-<script src="js/jquery-ui.js"></script>
+	<script src="js/jquery-ui.js"></script>
 	<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-<!--
 	<script src="js/app.js"></script>
 	-->
+	<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://code.jquery.com/ui/1.13.2/jquery-ui.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <link rel="stylesheet" type="text/css" href="css/app.css"/>
 	<style>
 		.row:before,.row:after{content:"";display:inline-table;clear:both;}
@@ -1443,116 +1444,87 @@ else { password.setSelectionRange(0, password.value.length);document.getElementB
 
 
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <script>
 ;(function($){
     $(document).ready(function(){
-        // --- GLOBAL VARIABLES ---
+        // GLOBAL VARIABLES
         var element = $("#dxeditor");
         var getCanvas; 
 
-        // --- 1. THE CORE GENERATE & DOWNLOAD LOGIC ---
+        // --- 1. CORE GENERATE & DOWNLOAD LOGIC ---
 
-        // Function to handle download (DESKTOP + MOBILE)
-        function triggerDownload() {
-            if (!getCanvas) {
-                alert("Please generate an image first");
-                return;
-            }
-            
-            var imageData = getCanvas.toDataURL("image/png");
-            
-            // Create a temporary link element (Most reliable mobile method)
+        // Mobile-safe download trigger
+        function triggerDownload(canvas) {
+            var imageData = canvas.toDataURL("image/png");
             var link = document.createElement('a');
             link.href = imageData;
             link.download = 'mypwchin.png';
-            link.target = '_blank'; // Required for some mobile browsers
-            
+            // Required for mobile Safari/Chrome to trigger download
             document.body.appendChild(link);
             link.click();
             document.body.removeChild(link);
         }
 
-        // Generate and Flip functionality
-        // We use the ID #renderpwchin to match your existing button
-// --- UPDATED GENERATE & DOWNLOAD LOGIC ---
+        // Generate Image (The "Flip" Logic)
+        $("#renderpwchin").on('click', function () {
+            var targetElement = document.getElementById("dxeditor");
 
-$("#renderpwchin").on('click', function() {
-    // 1. Get the element while it is still visible and attached
-    const target = document.getElementById('dxeditor');
-    
-    if (!target) {
-        console.error("Editor element not found!");
-        return;
-    }
+            // Check if element exists before rendering
+            if (!targetElement) return;
 
-    // Visual feedback
-    $("#renderitcool").addClass("dohighlight");
+            // Visual feedback
+            $("#renderitcool").addClass("dohighlight");
 
-    // 2. Capture BEFORE hiding the editor
-    html2canvas(target, {
-        useCORS: true,
-        allowTaint: true,
-        backgroundColor: null,
-        scale: 2,
-        logging: false
-    }).then(canvas => {
-        // Now that we have the canvas, we can safely flip the UI
-        $("#dxeditor").hide(); 
-        
-        // Show the preview container and add the canvas
-        $("#renderitcool").show().empty().append(canvas);
-        
-        // Convert canvas to a proper Image for better mobile "Save As" support
-        const imgData = canvas.toDataURL("image/png");
-        
-        // Ensure buttons exist and are linked to the new data
-        if ($("#dl-group").length === 0) {
-            $("#renderitcool").after(`
-                <div id="dl-group" style="text-align:center; margin-top:15px; padding-bottom:30px;">
-                    <button id="downloadPng" style="padding:12px 25px; background:#2ecc71; color:#fff; border:none; border-radius:8px; font-weight:bold;">Download PNG</button>
-                    <button id="editAgain" style="padding:12px 25px; background:#e74c3c; color:#fff; border:none; border-radius:8px; margin-left:10px; font-weight:bold;">Back to Editor</button>
-                </div>
-            `);
-        } else {
-            $("#dl-group").show();
+            // Capture BEFORE hiding the element to avoid "not attached" error
+            html2canvas(targetElement, {
+                useCORS: true,
+                allowTaint: true,
+                scale: 2, // Better quality for mobile
+                backgroundColor: null
+            }).then(function(canvas) {
+                getCanvas = canvas;
+                
+                // Clear preview area and show the flat image
+                $("#renderitcool").empty().append(canvas).show();
+                
+                // NOW flip the UI: Hide editor, show generated container
+                $("#dxeditor").hide(); 
+                
+                // UI Controls for the generated image
+                if ($("#dl-group").length === 0) {
+                    $("#renderitcool").after(`
+                        <div id="dl-group" style="text-align:center; margin-top:15px; padding-bottom:30px;">
+                            <button id="downloadPng" style="padding:12px 25px; background:#ff8c00; color:#fff; border:none; border-radius:5px; font-weight:bold; cursor:pointer;">DOWNLOAD PNG</button>
+                            <button id="editAgain" style="padding:12px 25px; background:#333; color:#fff; border:none; border-radius:5px; margin-left:10px; cursor:pointer;">BACK TO EDITOR</button>
+                        </div>
+                    `);
+                } else {
+                    $("#dl-group").show();
+                }
+                $("#renderitcool").removeClass("dohighlight");
+            });
+        });
+
+        // Event delegation for dynamic buttons
+        $(document).on('click', '#downloadPng', function() {
+            if (getCanvas) triggerDownload(getCanvas);
+        });
+
+        $(document).on('click', '#editAgain', function() {
+            $("#renderitcool").hide();
+            $("#dl-group").hide();
+            $("#dxeditor").show();
+        });
+
+        // --- 2. ORIGINAL AVATAR EDITOR LOGIC (Preserved) ---
+
+        // Initialize Tabs (Ensure jQuery UI is loaded in your HTML)
+        if ($.isFunction($.fn.tabs)) {
+            $( "#tabs" ).tabs({ classes: { "ui-tabs": "highlight" } });
         }
 
-        // Store the current image data on the button for the click handler
-        $("#downloadPng").data("img", imgData);
-        
-        // Remove highlight
-        $("#renderitcool").removeClass("dohighlight");
-    }).catch(err => {
-        console.error("Manual Catch - html2canvas error:", err);
-    });
-});
-
-// Mobile-Safe Download Handler using the hidden link method
-$(document).on('click', '#downloadPng', function() {
-    const dataUrl = $(this).data("img");
-    if (!dataUrl) return;
-
-    const link = document.createElement('a');
-    link.href = dataUrl;
-    link.download = 'pwchin-avatar.png';
-    // Append to body is required for some mobile browsers to trigger click
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-});
-
-// Toggle Back to Editor
-$(document).on('click', '#editAgain', function() {
-    $("#renderitcool").hide();
-    $("#dl-group").hide();
-    $("#dxeditor").show();
-});
-
-        // --- 2. ORIGINAL AVATAR EDITOR LOGIC ---
-
-        $( "#tabs" ).tabs({ classes: { "ui-tabs": "highlight" } });
-
-        // Inputs for various parts
+        // Avatar Part Selection
         $("input.hdp:checkbox").change(function(){
             $(".head, .head2").css('background-image','url('+ $(this).data("image")+')');
             $('input[type="checkbox"].hdp').not(this).prop('checked', false); 
@@ -1568,7 +1540,7 @@ $(document).on('click', '#editAgain', function() {
             $('input[type="checkbox"].mo').not(this).prop('checked', false); 
         });
 
-        // Axis/Transform Sliders
+        // Sliders & Positioning
         $('#eyeaxisy').on('input', e => $('.updown').css('transform', 'translateY( '+ $(e.target).val() + 'px )' ));
         $('#moaxisy').on('input', e => $('.updownmo').css('transform', 'translateY( '+ $(e.target).val() + 'px )' ));
         $('#moaxisx').on('input', e => $('#dxmouth').css('left', $(e.target).val() + 'px'));
@@ -1577,7 +1549,7 @@ $(document).on('click', '#editAgain', function() {
         $('#hairy').on('input', e => $('.hairup').css('top', $(e.target).val() + 'px'));
         $('#hairx').on('input', e => $('#hairelement').css('left', $(e.target).val() + 'px'));
 
-        // Clothing & Accessories
+        // Styles & Backgrounds
         $("input.gl:checkbox").change(function(){
             $(".glasses").css('background-image','url('+ $(this).data("image")+')');
             $('input[type="checkbox"].gl').not(this).prop('checked', false); 
@@ -1624,28 +1596,28 @@ $(document).on('click', '#editAgain', function() {
         $('#txtposy').on('input', e => $('#text1').css('transform', 'translateY( '+ $(e.target).val() +'px )' ));
         $('#slider').on('input', e => $('#text1').css('font-size', $(e.target).val() + 'em'));
 
-        // Draggable elements
-        $( ".dragit" ).draggable();
-        $(".achead").accordion({
-            icons: { "header": "ui-icon-plus", "activeHeader": "ui-icon-minus" },
-            active: 1
-        });
+        // Dragging & Accordion
+        if ($.isFunction($.fn.draggable)) {
+            $( ".dragit" ).draggable();
+        }
+        if ($.isFunction($.fn.accordion)) {
+            $(".achead").accordion({
+                icons: { "header": "ui-icon-plus", "activeHeader": "ui-icon-minus" },
+                active: 1
+            });
+        }
 
-        // Highlight Buttons logic
-        $("#vieweditor, #mainbuttons, #savedelete, #editorlibrary, #bgenvchange").on('click', function(){
-            var target = $(this).data('target'); // Assume you add data-target to your HTML
-            $(target).addClass("dohighlight");
-            setTimeout(() => $(target).removeClass("dohighlight"), 5700);
-        });
-
+        // Original Highlight Actions
+        $("#vieweditor").on('click', function(){ $("#bgmain").addClass("dohighlight"); setTimeout(()=>$("#bgmain").removeClass("dohighlight"), 5700); });
+        $("#mainbuttons").on('click', function(){ $("#editorbuttons").addClass("dohighlight"); setTimeout(()=>$("#editorbuttons").removeClass("dohighlight"), 5700); });
+        $("#savedelete").on('click', function(){ $("#clear").addClass("dohighlight"); setTimeout(()=>$("#clear").removeClass("dohighlight"), 5700); });
+        
         $("#showstand").click(function() { $("#stand").toggleClass("on"); });
-        $( "#clear" ).click(function() {
-            $("canvas" ).fadeOut( "slow", function() { $(this).remove(); });
-        });
+        $( "#clear" ).click(function() { $("canvas").fadeOut("slow", function() { $(this).remove(); }); });
     });
 })(jQuery);
 
-// --- GLOBAL FUNCTIONS (Outside scope for HTML access) ---
+// Global Functions for Default/Reset
 function dodefault() {
     $('.bodybio').css('background-image', 'url(img/b4.svg)');
     $('.bodyoutfit').css('background-image', 'url(img/c4.svg)');
@@ -1664,13 +1636,13 @@ function backtozero() {
     $('#hairelement').css('background-image', 'url(img/hair.svg)');
     $('#dxmouth').css('background-image', 'url(img/mo1.svg)');
     $('#glasses, .handslot, #txtbg, .sideleft, .sideright, #theitems, #dxeditor').css('background-image', 'url(img/empty.svg)');
-    $('#text1').remove();
+    $('#text1').empty();
 };
 </script>
-
 	
 </body>
 </html>
+
 
 
 
