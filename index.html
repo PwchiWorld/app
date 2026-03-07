@@ -4,9 +4,12 @@
 <meta charset="utf-8">
 <title>Pwchin Web App</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
+	<!--
 <script src="js/jquery-3.1.1.min.js"></script>
+	-->
 <script src="js/jquery-ui.js"></script>
-	<script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
+	<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <!--
 	<script src="js/app.js"></script>
 	-->
@@ -1437,460 +1440,213 @@ else { password.setSelectionRange(0, password.value.length);document.getElementB
 </div>
 <!--/ Main Wrapper --->
 
-	<script>
+
+
+
+<script>
 ;(function($){
+    $(document).ready(function(){
+        // --- GLOBAL VARIABLES ---
+        var element = $("#dxeditor");
+        var getCanvas; 
 
-	$(document).ready(function(){
+        // --- 1. THE CORE GENERATE & DOWNLOAD LOGIC ---
 
-	var element = $("#dxeditor");
-	var getCanvas; // global variable
+        // Function to handle download (DESKTOP + MOBILE)
+        function triggerDownload() {
+            if (!getCanvas) {
+                alert("Please generate an image first");
+                return;
+            }
+            
+            var imageData = getCanvas.toDataURL("image/png");
+            
+            // Create a temporary link element (Most reliable mobile method)
+            var link = document.createElement('a');
+            link.href = imageData;
+            link.download = 'mypwchin.png';
+            link.target = '_blank'; // Required for some mobile browsers
+            
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
 
-	// Function to handle download (SIMPLE & WORKS ON MOBILE)
-// Function to handle download (DESKTOP + MOBILE)
-function setupDownloadButton() {
-  $("#btn-Download-Image").off('click').on('click', function () {
-    if (!getCanvas) {
-      alert("Please generate an image first");
-      return;
-    }
-    
-    var imageData = getCanvas.toDataURL("image/png");
-    var isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
-    
-    if (isMobile) {
-      // MOBILE: Open image in new tab (this ALWAYS works)
-      window.location.href = imageData;
-    } else {
-      // DESKTOP: Download link
-      var link = document.createElement('a');
-      link.href = imageData;
-      link.download = 'mypwchin.png';
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-    }
-  });
-}
+        // Generate and Flip functionality
+        // We use the ID #renderpwchin to match your existing button
+        $("#renderpwchin").on('click', function () {
+            var targetElement = document.getElementById("dxeditor");
 
-	// Generate and Flip functionality
-	$("#btn-Preview-Image").on('click', function () {
-	  html2canvas(element, {
-		onrendered: function (canvas) {
-		  // Store the canvas globally
-		  getCanvas = canvas;
-		  
-		  // Clear preview area and append the NEW canvas
-		  $("#previewImage").empty().append(canvas);
-		  
-		  // PROPER SWAP: Hide editor, show generated view
-		  $("#dxeditor").addClass('noshow');
-		  $("#generated-view").removeClass('noshow');
-		  
-		  // Make sure download button works with this canvas
-		  setupDownloadButton();
-		}
-	  });
-	});
+            // Visual Feedback
+            $("#renderitcool").addClass("dohighlight");
+            setTimeout(() => $("#renderitcool").removeClass("dohighlight"), 5700);
 
-	// Back button functionality
-	$("#btn-Back-To-Editor").on('click', function() {
-	  // PROPER SWAP: Show editor, hide generated view
-	  $("#generated-view").addClass('noshow');
-	  $("#dxeditor").removeClass('noshow');
-	});
+            // Using modern html2canvas (Promise based)
+            html2canvas(targetElement, {
+                useCORS: true,
+                allowTaint: true,
+                scale: 2, // High resolution for mobile
+                backgroundColor: null
+            }).then(function(canvas) {
+                getCanvas = canvas;
+                
+                // Clear and Show Preview
+                $("#renderitcool").empty().append(canvas).show();
+                
+                // Flip the UI
+                $("#dxeditor").hide(); // Hide the editor
+                
+                // Create/Show buttons if they don't exist
+                if ($("#dl-group").length === 0) {
+                    $("#renderitcool").after(`
+                        <div id="dl-group" style="text-align:center; margin-top:10px; padding-bottom:20px;">
+                            <button id="downloadPng" style="padding:10px; background:#2ecc71; color:white; border:none; border-radius:5px;">Download PNG</button>
+                            <button id="editAgain" style="padding:10px; background:#e74c3c; color:white; border:none; border-radius:5px; margin-left:10px;">Back to Editor</button>
+                        </div>
+                    `);
+                } else {
+                    $("#dl-group").show();
+                }
+            }).catch(function(err) {
+                console.error("Canvas Error: ", err);
+            });
+        });
 
-	// Initialize download button
-	setupDownloadButton();
+        // Use Event Delegation for dynamic buttons
+        $(document).on('click', '#downloadPng', function() {
+            triggerDownload();
+        });
 
-	// Original Convert button (kept for compatibility)
-	$("#btn-Convert-Html2Image").on('click', function () {
-	  if (getCanvas) {
-		var imgageData = getCanvas.toDataURL("image/png");
-	  }
-	});
+        $(document).on('click', '#editAgain', function() {
+            $("#renderitcool").hide();
+            $("#dl-group").hide();
+            $("#dxeditor").show();
+        });
 
-	});
-	
+        // --- 2. ORIGINAL AVATAR EDITOR LOGIC ---
+
+        $( "#tabs" ).tabs({ classes: { "ui-tabs": "highlight" } });
+
+        // Inputs for various parts
+        $("input.hdp:checkbox").change(function(){
+            $(".head, .head2").css('background-image','url('+ $(this).data("image")+')');
+            $('input[type="checkbox"].hdp').not(this).prop('checked', false); 
+        });
+
+        $("input.ey:checkbox").change(function(){
+            $(".eyes").css('background-image','url('+ $(this).data("image")+')');
+            $('input[type="checkbox"].ey').not(this).prop('checked', false); 
+        });
+
+        $("input.mo:checkbox").change(function(){
+            $(".mouth").css('background-image','url('+ $(this).data("image")+')');
+            $('input[type="checkbox"].mo').not(this).prop('checked', false); 
+        });
+
+        // Axis/Transform Sliders
+        $('#eyeaxisy').on('input', e => $('.updown').css('transform', 'translateY( '+ $(e.target).val() + 'px )' ));
+        $('#moaxisy').on('input', e => $('.updownmo').css('transform', 'translateY( '+ $(e.target).val() + 'px )' ));
+        $('#moaxisx').on('input', e => $('#dxmouth').css('left', $(e.target).val() + 'px'));
+        $('#domoopa').on('input', e => $('.dtrans').css('opacity', $(e.target).val()));
+        $('#eyeaxisx').on('input', e => $('#dxeyes').css('left', $(e.target).val() + 'px'));
+        $('#hairy').on('input', e => $('.hairup').css('top', $(e.target).val() + 'px'));
+        $('#hairx').on('input', e => $('#hairelement').css('left', $(e.target).val() + 'px'));
+
+        // Clothing & Accessories
+        $("input.gl:checkbox").change(function(){
+            $(".glasses").css('background-image','url('+ $(this).data("image")+')');
+            $('input[type="checkbox"].gl').not(this).prop('checked', false); 
+        });
+
+        $("input.hr:checkbox").change(function(){
+            $(".hair").css('background-image','url('+ $(this).data("image")+')');
+            $('input[type="checkbox"].hr').not(this).prop('checked', false); 
+        });
+
+        $("input.mbg:checkbox").change(function(){
+            $(".bgmain").css('background-image','url('+ $(this).data("image")+')');
+            $('input[type="checkbox"].mbg').not(this).prop('checked', false); 
+        });
+
+        $("input.bo:checkbox").change(function(){
+            $(".bodybio").css('background-image','url('+ $(this).data("image")+')');
+            $('input[type="checkbox"].bo').not(this).prop('checked', false);
+        });
+
+        $("input.haine:checkbox").change(function(){
+            $(".bodyoutfit").css('background-image','url('+ $(this).data("image")+')');
+            $('input[type="checkbox"].haine').not(this).prop('checked', false); 
+        });
+
+        $("input.items:checkbox").change(function(){
+            $(".handslot").css('background-image','url('+ $(this).data("image")+')');
+            $('input[type="checkbox"].items').not(this).prop('checked', false); 
+        });
+
+        $("input.pwchibg:checkbox").change(function(){
+            $("#dxeditor").css('background-image','url('+ $(this).data("image")+')');
+            $('input[type="checkbox"].pwchibg').not(this).prop('checked', false); 
+        });
+
+        // Text Controls
+        window.dxsubmitTxt = function() {
+            var text1 = $("#myText1").val() || '<br>';
+            $("#text1").html(text1);
+        };
+
+        $('#textcolor').on('input', e => $('#text1').css('color', $(e.target).val() ));
+        $('#textbg').on('input', e => $('.thetext').css('background-color', $(e.target).val() ));
+        $('#txtposy').on('input', e => $('#text1').css('transform', 'translateY( '+ $(e.target).val() +'px )' ));
+        $('#slider').on('input', e => $('#text1').css('font-size', $(e.target).val() + 'em'));
+
+        // Draggable elements
+        $( ".dragit" ).draggable();
+        $(".achead").accordion({
+            icons: { "header": "ui-icon-plus", "activeHeader": "ui-icon-minus" },
+            active: 1
+        });
+
+        // Highlight Buttons logic
+        $("#vieweditor, #mainbuttons, #savedelete, #editorlibrary, #bgenvchange").on('click', function(){
+            var target = $(this).data('target'); // Assume you add data-target to your HTML
+            $(target).addClass("dohighlight");
+            setTimeout(() => $(target).removeClass("dohighlight"), 5700);
+        });
+
+        $("#showstand").click(function() { $("#stand").toggleClass("on"); });
+        $( "#clear" ).click(function() {
+            $("canvas" ).fadeOut( "slow", function() { $(this).remove(); });
+        });
+    });
 })(jQuery);
 
-$( "#tabs" ).tabs({
-  classes: {
-    "ui-tabs": "highlight",
-  }
-});
-		
-
-// Head Style 1
-$(document).ready(function(){
- $("input.hdp:checkbox").change(function(){
-$(".head").css('background-image','url('+ $(this).data("image")+')');
-$('input[type="checkbox"].hdp').not(this).prop('checked', false); 
-});
-});
-
-// Head Style 2 & 3
-$(document).ready(function(){
- $("input.hdp:checkbox").change(function(){
-$(".head2").css('background-image','url('+ $(this).data("image")+')');
-$('input[type="checkbox"].hdp').not(this).prop('checked', false); 
-});
-});
-
-// Eyes
-$(document).ready(function(){
- $("input.ey:checkbox").change(function(){
-$(".eyes").css('background-image','url('+ $(this).data("image")+')');
-$('input[type="checkbox"].ey').not(this).prop('checked', false); 
-});
-});
-
-// Mouth
-$(document).ready(function(){
- $("input.mo:checkbox").change(function(){
-$(".mouth").css('background-image','url('+ $(this).data("image")+')');
-$('input[type="checkbox"].mo').not(this).prop('checked', false); 
-});
-});
-
-//Move Eyes Up/Down
-$('#eyeaxisy').on('input', e => $('.updown').css('transform',  'translateY( '+ $(e.target).val() + 'px )' ));
-//Move Mouth Up/Down - Left/Right
-$('#moaxisy').on('input', e => $('.updownmo').css('transform',  'translateY( '+ $(e.target).val() + 'px )' ));
-$('#moaxisx').on('input', e => $('#dxmouth').css('left', $(e.target).val() + 'px'));
-// Mouth Opacity 
-$('#domoopa').on('input', e => $('.dtrans').css('opacity', $(e.target).val()));
-
-//Move Eyes Left/Right
-$('#eyeaxisx').on('input', e => $('#dxeyes').css('left', $(e.target).val() + 'px'));
-
-//Move Hair Element Up/Down - Left/Right
-$('#hairy').on('input', e => $('.hairup').css('top', $(e.target).val() + 'px'));
-$('#hairx').on('input', e => $('#hairelement').css('left', $(e.target).val() + 'px'));
-
-// Glasses
-$(document).ready(function(){
- $("input.gl:checkbox").change(function(){
-$(".glasses").css('background-image','url('+ $(this).data("image")+')');
-$('input[type="checkbox"].gl').not(this).prop('checked', false); 
-});
-});
-
-// Hair Styles
-$(document).ready(function(){
- $("input.hr:checkbox").change(function(){
-$(".hair").css('background-image','url('+ $(this).data("image")+')');
-$('input[type="checkbox"].hr').not(this).prop('checked', false); 
-});
-});
-
-// Change Main Background
-$(document).ready(function(){
- $("input.mbg:checkbox").change(function(){
-$(".bgmain").css('background-image','url('+ $(this).data("image")+')');
-$('input[type="checkbox"].mbg').not(this).prop('checked', false); 
-});
-});
-
-// Change Body Style Pwchin
-$(document).ready(function(){
- $("input.bo:checkbox").change(function(){
-$(".bodybio").css('background-image','url('+ $(this).data("image")+')');
-$('input[type="checkbox"].bo').not(this).prop('checked', false);
-});
-});
-
-// Change Outfit
-$(document).ready(function(){
- $("input.haine:checkbox").change(function(){
-$(".bodyoutfit").css('background-image','url('+ $(this).data("image")+')');
-$('input[type="checkbox"].haine').not(this).prop('checked', false); 
-});
-});
-
-// Change Items Hands
-$(document).ready(function(){
- $("input.items:checkbox").change(function(){
-$(".handslot").css('background-image','url('+ $(this).data("image")+')');
-$('input[type="checkbox"].items').not(this).prop('checked', false); 
-});
-});
-
-// Change Items Hands
-$(document).ready(function(){
- $("input.itemsbig:checkbox").change(function(){
-$(".biggeritems").css('background-image','url('+ $(this).data("image")+')');
-$('input[type="checkbox"].itemsbig').not(this).prop('checked', false); 
-});
-});
-
-// Change Pwchi Bg
-$(document).ready(function(){
- $("input.pwchibg:checkbox").change(function(){
-$("#dxeditor").css('background-image','url('+ $(this).data("image")+')');
-$('input[type="checkbox"].pwchibg').not(this).prop('checked', false); 
-});
-});
-
-//Delete Text
-function dxdelete1() {
-	   var divs = document.querySelectorAll('#text1');
- for (var i = 0; i < divs.length; i++) {
-    divs[i].classList.toggle('delete1');
-				$('#svgicon').toggleClass('rotate');
- }};
-	//Remove Text Background color
-	function dxdelete2() {
-	   var divs = document.querySelectorAll('.thetext');
- for (var i = 0; i < divs.length; i++) {
-    divs[i].classList.toggle('rembg');
-				$('#svgicon2').toggleClass('rotate');
- }};
-
-function dxsubmitTxt() {
-	var text1 = $("#myText1").val() || '<br>';
-	$("#text1").html(text1);
-};
-//Change Font Color
-$('#textcolor').on('input', e => $('#text1').css('color', $(e.target).val() ));
-//Change Font Background color
-$('#textbg').on('input', e => $('.thetext').css('background-color', $(e.target).val() ));
-//Text position
-$('#txtposy').on('input', e => $('#text1').css('transform',  'translateY( '+ $(e.target).val() +'px )' ));
-
-// Change Font Size
-$('#slider').on('input', e => $('#text1').css('font-size', $(e.target).val() + 'em'));
-// Change Font
-var dxfontArray = [
-// Font 1 Default
-'-apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica Neue, Arial, sans-serif, Apple Color Emoji, Segoe UI Emoji, Segoe UI Symbol',
-// Font 2
-'Bebas Neue',
-// Font 3
-'Oswald',
-// Font 4
-'Gemunu Libre',
-// Font 5
-'Audiowide',
-// Font 6
-'Goldman',
-// Font 7
-'Pirata One',
-// Font 8
-'Play',
-// Font 9
-'Cinzel Decorative',
-// Font 10
-'Comforter Brush',
-// Font 11
-'Great Vibes',
-// Font 12
-'Lobster Two',
-// Font 13
-'Zilla Slab Highlight'
-]
- $('#framechangefont').on('change', function(){
-    value = $(this).val() - 1;
-   $('#text1').css({'font-family':'' + dxfontArray[value] + ''});
-			
-});
-
-// Change Text Background Graphic
-var dxframeArray = [
-// 1 Empty
-'img/empty.svg',
-'img/items/1bgtxt.svg',
-'img/items/2bgtxt.svg',
-'img/items/3bgtxt.svg'
-]
-$('#framechangebg').on('change', function(){
-value = $(this).val() - 1;
-$('#text1').css({'background-image':'url(' + dxframeArray[value] + ')'});
-});
-//BG Opacity
-$('#icopa').on('input', e => $('.thetext').css('opacity', $(e.target).val()));
-
-//Change Text Size 1
-$('#xletter').on('input', e => $('#text1').css('letter-spacing', $(e.target).val() + 'px'));
-//Drag Elements
-$(function() {
-    $( ".dragit" ).draggable();
-});
-
-//Acordion
-$(function(){
-    $(".achead").accordion();
-  });
-$( ".achead" ).accordion({
-  icons: { "header": "ui-icon-plus", "activeHeader": "ui-icon-minus" },
-		active: [1]
-});
-
-// Do Daily Pwchin
+// --- GLOBAL FUNCTIONS (Outside scope for HTML access) ---
 function dodefault() {
- var divs = document.querySelectorAll('.dailypwchin');
- for (var i = 0; i < divs.length; i++) {
-    divs[i].classList.toggle('doshow');
-				$('.bodybio').css('background-image', 'url(img/b4.svg)');
-				$('.bodyoutfit').css('background-image', 'url(img/c4.svg)');
-				$('#dxeyes').css('background-image', 'url(img/anime.svg)');
-				$('#hairelement').css('background-image', 'url(img/hair18j.svg)');
-				$('#dxmouth').css('background-image', 'url(img/xm5.svg)');
-				$('#glasses').css('background-image', 'url(img/gl2.svg)');
-				$('.handslot').css('background-image', 'url(img/items/newsp.svg)');
+    $('.bodybio').css('background-image', 'url(img/b4.svg)');
+    $('.bodyoutfit').css('background-image', 'url(img/c4.svg)');
+    $('#dxeyes').css('background-image', 'url(img/anime.svg)');
+    $('#hairelement').css('background-image', 'url(img/hair18j.svg)');
+    $('#dxmouth').css('background-image', 'url(img/xm5.svg)');
+    $('#glasses').css('background-image', 'url(img/gl2.svg)');
+    $('.handslot').css('background-image', 'url(img/items/newsp.svg)');
+};
 
-}};	
-
-// Do Revert to Default
 function backtozero() {
- var divs = document.querySelectorAll('.dailypwchin');
- for (var i = 0; i < divs.length; i++) {
-    divs[i].classList.toggle('doshow');
-				$('.bodybio').css('background-image', 'url(img/b1.svg)');
-				$('.head').css('background-image', 'url(img/head.svg)');
-				$('.bodyoutfit').css('background-image', 'url(img/o04.svg)');
-				$('#dxeyes').css('background-image', 'url(img/eyes.svg)');
-				$('#hairelement').css('background-image', 'url(img/hair.svg)');
-				$('#dxmouth').css('background-image', 'url(img/mo1.svg)');
-				$('#glasses').css('background-image', 'url(img/empty.svg)');
-				$('.handslot').css('background-image', 'url(img/empty.svg)');
-				$('#txtbg').css('background-image', 'url(img/empty.svg)');
-				$('.sideleft').css('background-image', 'url(img/empty.svg)');
-				$('.sideright').css('background-image', 'url(img/empty.svg)');
-				$('#theitems').css('background-image', 'url(img/empty.svg)');
-				$('#dxeditor').css('background-image', 'url(img/empty.svg)');
-				$('#text1').remove();
-
-}};	
-
-
-// --- NEW: GENERATE & DOWNLOAD LOGIC ---
-
-$("#renderpwchin").on('click', function() {
-    // 1. Visual feedback (Keep your existing highlight)
-    $("#renderitcool").addClass("dohighlight");
-    setTimeout(() => $("#renderitcool").removeClass("dohighlight"), 5700);
-
-    // 2. The "Flip" Logic
-    const editorElement = document.getElementById('dxeditor');
-    
-    // Capture the layers
-    html2canvas(editorElement, {
-        useCORS: true, 
-        backgroundColor: null, // Keeps transparency if needed
-        scale: 2 // Higher quality for mobile screens
-    }).then(canvas => {
-        canvas.id = "finalOutput";
-        
-        // Hide editor, show the container with the generated image
-        $("#dxeditor").hide(); 
-        $("#renderitcool").show().empty().append(canvas);
-        
-        // Create the buttons if they don't exist, or just show them
-        if ($("#dl-group").length === 0) {
-            $("#renderitcool").after(`
-                <div id="dl-group" style="text-align:center; margin-top:10px;">
-                    <button id="downloadPng" class="btn">Download PNG</button>
-                    <button id="editAgain" class="btn">Back to Editor</button>
-                </div>
-            `);
-        } else {
-            $("#dl-group").show();
-        }
-    });
-});
-
-// Mobile-Safe Download Handler
-$(document).on('click', '#downloadPng', function() {
-    const canvas = document.getElementById("finalOutput");
-    const imageData = canvas.toDataURL("image/png");
-    
-    // Create a temporary link element
-    const link = document.createElement('a');
-    link.setAttribute('download', 'my-pwchin.png');
-    link.setAttribute('href', imageData);
-    link.setAttribute('target', '_blank'); // Helps on some mobile browsers
-    
-    document.body.appendChild(link);
-    link.click(); // Trigger the download
-    document.body.removeChild(link); // Clean up
-});
-
-// Toggle Back to Editor
-$(document).on('click', '#editAgain', function() {
-    $("#renderitcool").hide();
-    $("#dl-group").hide();
-    $("#dxeditor").show();
-});
-
-// --- REST OF YOUR ORIGINAL CODE ---
-
-
-		
-
-//Editor Preview
-	$("#vieweditor").on('click',function(){
-			 $("#bgmain").addClass("dohighlight");
-       setTimeout(function() {
-            $("#bgmain").removeClass("dohighlight");
-        }, 5700);
-	});
-	
-	//Main Buttons
-	$("#mainbuttons").on('click',function(){
-			 $("#editorbuttons").addClass("dohighlight");
-       setTimeout(function() {
-            $("#editorbuttons").removeClass("dohighlight");
-        }, 5700);
-	});
-	
-		//Save and Delete
-	$("#savedelete").on('click',function(){
-			 $("#clear").addClass("dohighlight");
-       setTimeout(function() {
-            $("#clear").removeClass("dohighlight");
-        }, 5700);
-	});
-	
-		//Editor Library
-	$("#editorlibrary").on('click',function(){
-			 $("#tabs").addClass("dohighlight");
-       setTimeout(function() {
-            $("#tabs").removeClass("dohighlight");
-        }, 5700);
-	});
-	
-	//The Backgrounds
-	$("#bgenvchange").on('click',function(){
-			 $("#cgcoptions").addClass("dohighlight");
-       setTimeout(function() {
-            $("#cgcoptions").removeClass("dohighlight");
-        }, 5700);
-	});
-	
-	//Output
-	$("#renderpwchin").on('click',function(){
-			 $("#renderitcool").addClass("dohighlight");
-       setTimeout(function() {
-            $("#renderitcool").removeClass("dohighlight");
-        }, 5700);
-	});
-				
-	//Toggle Stand On/Off	
-		$("#showstand").click(function() {
-  $("#stand").toggleClass("on");
-});
-
-//CLEAR canvas
-$( "#clear" ).click(function() {
-  $("canvas" ).fadeOut( "slow", function() {
-    $('canvas').remove();
-  });
-});
-	
+    $('.bodybio').css('background-image', 'url(img/b1.svg)');
+    $('.head').css('background-image', 'url(img/head.svg)');
+    $('.bodyoutfit').css('background-image', 'url(img/o04.svg)');
+    $('#dxeyes').css('background-image', 'url(img/eyes.svg)');
+    $('#hairelement').css('background-image', 'url(img/hair.svg)');
+    $('#dxmouth').css('background-image', 'url(img/mo1.svg)');
+    $('#glasses, .handslot, #txtbg, .sideleft, .sideright, #theitems, #dxeditor').css('background-image', 'url(img/empty.svg)');
+    $('#text1').remove();
+};
 </script>
+
 	
 </body>
 </html>
+
 
 
 
