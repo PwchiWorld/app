@@ -2669,7 +2669,7 @@ window.html2canvas = function(elements, opts) {
     // preload options
     proxy: null,
     timeout: 0,    // no timeout
-    useCORS: true, // try to load images as CORS (where available), before falling back to proxy
+    useCORS: false, // try to load images as CORS (where available), before falling back to proxy ------------------- this was true
     allowTaint: false, // whether to allow images to taint the canvas, won't need proxy if set to true
 
     // parse options
@@ -2865,4 +2865,5 @@ _html2canvas.Renderer.Canvas = function(options) {
     return canvas;
   };
 };
+
 })(window,document);
