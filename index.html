@@ -1759,6 +1759,71 @@ function backtozero() {
 
 }};	
 
+
+// --- NEW: GENERATE & DOWNLOAD LOGIC ---
+
+$("#renderpwchin").on('click', function() {
+    // 1. Visual feedback (Keep your existing highlight)
+    $("#renderitcool").addClass("dohighlight");
+    setTimeout(() => $("#renderitcool").removeClass("dohighlight"), 5700);
+
+    // 2. The "Flip" Logic
+    const editorElement = document.getElementById('dxeditor');
+    
+    // Capture the layers
+    html2canvas(editorElement, {
+        useCORS: true, 
+        backgroundColor: null, // Keeps transparency if needed
+        scale: 2 // Higher quality for mobile screens
+    }).then(canvas => {
+        canvas.id = "finalOutput";
+        
+        // Hide editor, show the container with the generated image
+        $("#dxeditor").hide(); 
+        $("#renderitcool").show().empty().append(canvas);
+        
+        // Create the buttons if they don't exist, or just show them
+        if ($("#dl-group").length === 0) {
+            $("#renderitcool").after(`
+                <div id="dl-group" style="text-align:center; margin-top:10px;">
+                    <button id="downloadPng" class="btn">Download PNG</button>
+                    <button id="editAgain" class="btn">Back to Editor</button>
+                </div>
+            `);
+        } else {
+            $("#dl-group").show();
+        }
+    });
+});
+
+// Mobile-Safe Download Handler
+$(document).on('click', '#downloadPng', function() {
+    const canvas = document.getElementById("finalOutput");
+    const imageData = canvas.toDataURL("image/png");
+    
+    // Create a temporary link element
+    const link = document.createElement('a');
+    link.setAttribute('download', 'my-pwchin.png');
+    link.setAttribute('href', imageData);
+    link.setAttribute('target', '_blank'); // Helps on some mobile browsers
+    
+    document.body.appendChild(link);
+    link.click(); // Trigger the download
+    document.body.removeChild(link); // Clean up
+});
+
+// Toggle Back to Editor
+$(document).on('click', '#editAgain', function() {
+    $("#renderitcool").hide();
+    $("#dl-group").hide();
+    $("#dxeditor").show();
+});
+
+// --- REST OF YOUR ORIGINAL CODE ---
+
+
+		
+
 //Editor Preview
 	$("#vieweditor").on('click',function(){
 			 $("#bgmain").addClass("dohighlight");
@@ -1823,6 +1888,7 @@ $( "#clear" ).click(function() {
 	
 </body>
 </html>
+
 
 
 
