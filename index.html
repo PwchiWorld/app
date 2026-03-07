@@ -12,7 +12,7 @@
 		.row:before,.row:after{content:"";display:inline-table;clear:both;}
 
 
-		/* Add this CSS */
+		/*** Add this CSS 
 .editor-view, .generated-view {
   transition: opacity 0.3s ease;
 }
@@ -24,6 +24,34 @@
 .generated-view.active-view { display: block; }
 
 
+ 
+#dxeditor {
+  display: block;
+}
+
+#generated-view {
+  display: none;
+}
+
+ 
+#dxeditor.active-view {
+  display: block;
+}
+
+#generated-view.active-view {
+  display: block;
+}
+
+ 
+#dxeditor:not(.active-view) {
+  display: none;
+}
+
+#generated-view:not(.active-view) {
+  display: none;
+}
+		
+***/
 /* Add these styles to your CSS */
 #dxeditor {
   display: block;
@@ -50,8 +78,6 @@
 #generated-view:not(.active-view) {
   display: none;
 }
-		
-		
 	</style>
 </head>
 
@@ -80,7 +106,7 @@ Try not to mess things up because I'm not a developer.
 <div id="stand" class="stand off"><span class="pwchi" title="I have created wonderful PNG">PWCHI</span></div>
 <!-- Start Flip --->
       <span id="showitgenerated">
-		  <div id="dxeditor" style="display:block;width:350px;height:480px;margin:60px auto 20px auto;box-sizing:border-box;text-align:center;background-color:transparent;overflow:hidden;position:relative;filter:drop-shadow(0 2px 7px rgba(0,0,0,.0));zindex:10;padding-top:0;background-image:url('img/empty.svg');background-repeat:no-repeat;background-size:350px 480px;background-position:0 8px;" class="show active-view">
+		  <div id="dxeditor" style="display:block;width:350px;height:480px;margin:60px auto 20px auto;box-sizing:border-box;text-align:center;background-color:transparent;overflow:hidden;position:relative;filter:drop-shadow(0 2px 7px rgba(0,0,0,.0));zindex:10;padding-top:0;background-image:url('img/empty.svg');background-repeat:no-repeat;background-size:350px 480px;background-position:0 8px;" class="showE active-view">
 						
 						<div class="dxbody" style="display:block;width:350px;height:450px;margin:0 auto -300px auto;transform: translateY(0);z-index:2;">
 						  <div class="bodybio dailypwchin" style="display:block;width:350px;height:450px;margin:0 auto -450px auto;transform: translateY(0);z-index:3;background-image:url('img/b1.svg');background-repeat:no-repeat;background-size:350px 450px;background-position:0 0;"></div>
@@ -1903,6 +1929,7 @@ $( "#clear" ).click(function() {
 	
 </body>
 </html>
+
 
 
 
