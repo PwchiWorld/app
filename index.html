@@ -1449,20 +1449,29 @@ else { password.setSelectionRange(0, password.value.length);document.getElementB
 
 var getCanvas; 
 
-// 1. UPDATED PREVIEW FUNCTION: Uses native html2canvas CORS proxy
-$("#btn-Preview-Image").off("click").on("click", function () {
+// 1. UNIVERSAL BUTTON HANDLERS: Using delegation to ensure they always work
+$(document).on("click", "#btn-Preview-Image", function () {
   var $btn = $(this);
   var element = $("#dxeditor")[0];
   
   $btn.text("Generating...").prop("disabled", true);
 
-  // Use html2canvas with native CORS support and a proxy if needed.
-  // We'll also use a more reliable way to handle the images.
+  // FORCE CORS: Add 'crossorigin' attribute and a cache-busting timestamp to all images
+  $("#dxeditor img").each(function() {
+    var $img = $(this);
+    var src = $img.attr("src");
+    if (src && !src.startsWith("data:")) {
+      $img.attr("crossorigin", "anonymous");
+      // Append a timestamp to the URL to force a fresh, CORS-aware request
+      $img.attr("src", src + (src.indexOf("?") > -1 ? "&" : "?") + "t=" + new Date().getTime());
+    }
+  });
+
+  // Use html2canvas with native CORS support, NO EXTERNAL PROXY
   html2canvas(element, {
-    useCORS: true,          // CRITICAL: Tells html2canvas to use CORS for external images
-    allowTaint: false,      // MUST be false for toDataURL to work later
+    useCORS: true,
+    allowTaint: false, // MUST be false for toDataURL to work later
     logging: false,
-    proxy: "https://html2canvas-proxy.herokuapp.com/", // A standard proxy to bypass CORS
     onrendered: function (canvas) {
       getCanvas = canvas;
       
@@ -1476,16 +1485,17 @@ $("#btn-Preview-Image").off("click").on("click", function () {
   });
 });
 
-// 2. RESTORED "BACK TO EDITOR" BUTTON: Ensures this still works on desktop/mobile
-$("#btn-Back-To-Editor").off("click").on("click", function() {
+// 2. ROBUST "BACK TO EDITOR" BUTTON: Works on desktop and mobile
+$(document).on("click", "#btn-Back-To-Editor", function() {
   $("#generated-view").addClass("noshow");
   $("#dxeditor").removeClass("noshow");
   $("#btn-Download-Image").text("Download Image").prop("disabled", false);
 });
 
-// 3. UPDATED DOWNLOAD FUNCTION: Handles mobile saving reliably
+// 3. ROBUST DOWNLOAD FUNCTION: Works on desktop and mobile
 function setupDownloadButton() {
-  $("#btn-Download-Image").off("click").on("click", function () {
+  // Use delegation for the download button too
+  $(document).off("click", "#btn-Download-Image").on("click", "#btn-Download-Image", function () {
     if (!getCanvas) {
       alert("Please generate an image first");
       return;
@@ -1499,7 +1509,7 @@ function setupDownloadButton() {
       var imgData = getCanvas.toDataURL("image/png");
       
       if (!imgData || imgData === "data:,") {
-        throw new Error("Canvas is empty after rendering.");
+        throw new Error("Canvas is empty or tainted. Check image CORS headers.");
       }
 
       var isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
@@ -1533,7 +1543,7 @@ function setupDownloadButton() {
       }
     } catch (e) {
       console.error("Download Error:", e);
-      alert("An error occurred during download preparation: " + e.message + ". Please try again.");
+      alert("Security error: The image host is blocking the download. Please host your images on the same domain as the app, or ensure they have CORS enabled.");
     } finally {
       $btn.text("Download Image").prop("disabled", false);
     }
@@ -1859,6 +1869,7 @@ $( "#clear" ).click(function() {
 	
 </body>
 </html>
+
 
 
 
