@@ -1447,85 +1447,40 @@ else { password.setSelectionRange(0, password.value.length);document.getElementB
 <script>
 ;(function($){
 
-	/**
- * FINAL FUNCTIONAL FIX: Bypassing CORS Security Errors with Base64 Conversion
- * This script ensures images are treated as "local" by converting them to Base64
- * before html2canvas processes them, completely bypassing CORS restrictions.
- */
-
 var getCanvas; 
 
-// 1. HELPER: This function converts an image URL to a Base64 string.
-// This is the most reliable way to bypass CORS for canvas operations.
-function toBase64(url, callback) {
-  var xhr = new XMLHttpRequest();
-  xhr.onload = function() {
-    var reader = new FileReader();
-    reader.onloadend = function() {
-      callback(reader.result);
-    }
-    reader.readAsDataURL(xhr.response);
-  };
-  xhr.open("GET", url);
-  xhr.responseType = "blob";
-  xhr.send();
-}
-
-// 2. UPDATED PREVIEW FUNCTION: Forces images to be CORS-friendly via Base64
+// 1. UPDATED PREVIEW FUNCTION: Uses native html2canvas CORS proxy
 $("#btn-Preview-Image").off("click").on("click", function () {
   var $btn = $(this);
-  var element = $("#dxeditor");
+  var element = $("#dxeditor")[0];
   
   $btn.text("Generating...").prop("disabled", true);
 
-  var images = element.find("img");
-  var imagesToProcess = images.length;
-  var processedImages = 0;
-
-  if (imagesToProcess === 0) {
-    // No images, proceed directly to html2canvas
-    generateCanvas();
-    return;
-  }
-
-  images.each(function() {
-    var $img = $(this);
-    var originalSrc = $img.attr("src");
-
-    // Only process if it's not already a data URL and not empty
-    if (originalSrc && !originalSrc.startsWith("data:")) {
-      toBase64(originalSrc, function(base64Img) {
-        $img.attr("src", base64Img);
-        processedImages++;
-        if (processedImages === imagesToProcess) {
-          generateCanvas();
-        }
-      });
-    } else {
-      processedImages++;
-      if (processedImages === imagesToProcess) {
-        generateCanvas();
-      }
+  // Use html2canvas with native CORS support and a proxy if needed.
+  // We'll also use a more reliable way to handle the images.
+  html2canvas(element, {
+    useCORS: true,          // CRITICAL: Tells html2canvas to use CORS for external images
+    allowTaint: false,      // MUST be false for toDataURL to work later
+    logging: false,
+    proxy: "https://html2canvas-proxy.herokuapp.com/", // A standard proxy to bypass CORS
+    onrendered: function (canvas) {
+      getCanvas = canvas;
+      
+      $("#previewImage").empty().append(canvas);
+      $("#dxeditor").addClass("noshow");
+      $("#generated-view").removeClass("noshow");
+      
+      $btn.text("Preview Image").prop("disabled", false);
+      setupDownloadButton(); // Re-bind download button
     }
   });
+});
 
-  function generateCanvas() {
-    html2canvas(element[0], {
-      useCORS: false, // Not needed as images are now Base64
-      allowTaint: false, // Not needed as images are now Base64
-      logging: false,
-      onrendered: function (canvas) {
-        getCanvas = canvas;
-        
-        $("#previewImage").empty().append(canvas);
-        $("#dxeditor").addClass("noshow");
-        $("#generated-view").removeClass("noshow");
-        
-        $btn.text("Preview Image").prop("disabled", false);
-        setupDownloadButton();
-      }
-    });
-  }
+// 2. RESTORED "BACK TO EDITOR" BUTTON: Ensures this still works on desktop/mobile
+$("#btn-Back-To-Editor").off("click").on("click", function() {
+  $("#generated-view").addClass("noshow");
+  $("#dxeditor").removeClass("noshow");
+  $("#btn-Download-Image").text("Download Image").prop("disabled", false);
 });
 
 // 3. UPDATED DOWNLOAD FUNCTION: Handles mobile saving reliably
@@ -1904,6 +1859,7 @@ $( "#clear" ).click(function() {
 	
 </body>
 </html>
+
 
 
 
