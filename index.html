@@ -1443,112 +1443,133 @@ else { password.setSelectionRange(0, password.value.length);document.getElementB
 <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 -->
+
 <script>
 ;(function($){
 
 	$(document).ready(function(){
 
-
 	var element = $("#dxeditor");
 	var getCanvas; // global variable
 
-		$("#btn-Preview-Image").on('click', function () {
-			 html2canvas(element, {
-			 onrendered: function (canvas) {
-					$("#previewImage").append(canvas);
-					getCanvas = canvas;
-					
-					// FLIP FUNCTIONALITY: When image is generated, swap the content
-					$("#showitgenerated").fadeOut(300, function() {
-						// Store the current content
-						var generatedContent = $('#showitgenerated').html();
-						
-						// Create new content with preview image and download button
-						var newContent = '<div id="previewImage" class="outputimage">' + 
-										 '<canvas></canvas>' + 
-										 '</div>' + 
-										 '<button id="btn-Download-Image" class="download-btn">Download Image</button>';
-						
-						// Replace the content
-						$('#showitgenerated').html(newContent);
-						
-						// Re-append the actual canvas (since we just have an empty canvas tag)
-						$("#previewImage").html(canvas);
-						
-						// Fade back in
-						$("#showitgenerated").fadeIn(300);
-					});
-				 }
-			 });
-		});
-
-		$("#btn-Convert-Html2Image").on('click', function () {
-			var imgageData = getCanvas.toDataURL("image/png");
-		});
-
-		// MODIFIED DOWNLOAD BUTTON FOR MOBILE SUPPORT
-		$("#btn-Download-Image").on('click', function () {
-			var imageData = getCanvas.toDataURL("image/png");
-			
-			// Check if we're on a mobile device (simple user agent check)
-			var isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
-			
-			if (isMobile) {
-				// MOBILE FRIENDLY APPROACH: Open in new tab for long-press saving
-				var newWindow = window.open();
-				if (newWindow) {
-					// Success - show image in new tab with save instructions
-					newWindow.document.write('<html><head><title>Your Pwchin - Long press to save</title>');
-					newWindow.document.write('<meta name="viewport" content="width=device-width, initial-scale=1.0">');
-					newWindow.document.write('<style>body{margin:0;display:flex;justify-content:center;align-items:center;min-height:100vh;background:#f0f0f0;font-family:sans-serif;}');
-					newWindow.document.write('.container{text-align:center;padding:20px;}');
-					newWindow.document.write('img{max-width:100%;height:auto;border-radius:8px;box-shadow:0 4px 12px rgba(0,0,0,0.15);}');
-					newWindow.document.write('.instruction{margin-top:20px;color:#666;font-size:16px;}</style></head>');
-					newWindow.document.write('<body><div class="container">');
-					newWindow.document.write('<img src="' + imageData + '" alt="Your Pwchin" />');
-					newWindow.document.write('<div class="instruction">📱 Long press on the image to save it to your device</div>');
-					newWindow.document.write('</div></body></html>');
-					newWindow.document.close();
-				} else {
-					// Popup blocked - fallback to preview area
-					alert("Please allow popups or use this method: Long-press the generated image below to save");
-				}
-			} else {
-				// DESKTOP APPROACH: Traditional download link
-				var downloadLink = document.createElement('a');
-				downloadLink.href = imageData;
-				downloadLink.download = 'mypwchin.png';
-				document.body.appendChild(downloadLink);
-				downloadLink.click();
-				document.body.removeChild(downloadLink);
-			}
-		});
+	// Function to handle download (mobile friendly)
+	function setupDownloadButton() {
+	  $("#btn-Download-Image").off('click').on('click', function () {
+		if (!getCanvas) {
+		  alert("Please generate an image first");
+		  return;
+		}
 		
-		// ADDED: Function to flip back to editor view (optional - can be triggered by another button)
-		$("#btn-Back-To-Editor").on('click', function () {
-			$("#showitgenerated").fadeOut(300, function() {
-				// Restore original editor content
-				var originalContent = '<div id="dxeditor" class="allitems">' + 
-									  '<!-- Your original editor content here -->' + 
-									  '</div>';
-				
-				// You might want to store the original HTML somewhere
-				// For now, we'll just show the canvas is removed
-				$('#showitgenerated').html('<div id="dxeditor" class="allitems">' + $('#dxeditor').html() + '</div>');
-				$("#showitgenerated").fadeIn(300);
-			});
-		});
+		var imageData = getCanvas.toDataURL("image/png");
+		var isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
 		
+		if (isMobile) {
+		  // Mobile: Open in new tab for long-press saving
+		  var newWindow = window.open();
+		  if (newWindow) {
+			newWindow.document.write(`
+			  <html>
+				<head>
+				  <title>Your Pwchin</title>
+				  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+				  <style>
+					body { 
+					  margin: 0; 
+					  display: flex; 
+					  justify-content: center; 
+					  align-items: center; 
+					  min-height: 100vh; 
+					  background: #333;
+					  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+					}
+					.container {
+					  text-align: center;
+					  padding: 20px;
+					}
+					img { 
+					  max-width: 100%; 
+					  height: auto; 
+					  border-radius: 12px;
+					  box-shadow: 0 8px 24px rgba(0,0,0,0.5);
+					}
+					.instructions {
+					  margin-top: 20px;
+					  color: white;
+					  background: rgba(0,0,0,0.8);
+					  padding: 15px 25px;
+					  border-radius: 30px;
+					  font-size: 16px;
+					  display: inline-block;
+					}
+				  </style>
+				</head>
+				<body>
+				  <div class="container">
+					<img src="${imageData}" alt="Your Pwchin" />
+					<div class="instructions">📱 Long press image to save</div>
+				  </div>
+				</body>
+			  </html>
+			`);
+			newWindow.document.close();
+		  } else {
+			alert("📱 Long press on the image below to save it to your device");
+		  }
+		} else {
+		  // Desktop: Direct download
+		  var downloadLink = document.createElement('a');
+		  downloadLink.href = imageData;
+		  downloadLink.download = 'mypwchin.png';
+		  document.body.appendChild(downloadLink);
+		  downloadLink.click();
+		  document.body.removeChild(downloadLink);
+		}
+	  });
+	}
+
+	// Generate and Flip functionality
+	$("#btn-Preview-Image").on('click', function () {
+	  html2canvas(element, {
+		onrendered: function (canvas) {
+		  // Store the canvas globally
+		  getCanvas = canvas;
+		  
+		  // Clear preview area and append the NEW canvas
+		  $("#previewImage").empty().append(canvas);
+		  
+		  // FLIP TO GENERATED VIEW
+		  $("#dxeditor").hide();
+		  $("#generated-view").show();
+		  
+		  // Make sure download button works with this canvas
+		  setupDownloadButton();
+		}
+	  });
+	});
+
+	// Back button functionality
+	$("#btn-Back-To-Editor").on('click', function() {
+	  $("#generated-view").hide();
+	  $("#dxeditor").show();
+	});
+
+	// Initialize download button
+	setupDownloadButton();
+
+	// Original Convert button (kept for compatibility)
+	$("#btn-Convert-Html2Image").on('click', function () {
+	  if (getCanvas) {
+		var imgageData = getCanvas.toDataURL("image/png");
+	  }
+	});
+
 	});
 	
 })(jQuery);
 
-
-
 $( "#tabs" ).tabs({
   classes: {
     "ui-tabs": "highlight",
-				//	active: 1
   }
 });
 		
@@ -1585,10 +1606,6 @@ $('input[type="checkbox"].mo').not(this).prop('checked', false);
 });
 });
 
-
-
-
-
 //Move Eyes Up/Down
 $('#eyeaxisy').on('input', e => $('.updown').css('transform',  'translateY( '+ $(e.target).val() + 'px )' ));
 //Move Mouth Up/Down - Left/Right
@@ -1599,7 +1616,6 @@ $('#domoopa').on('input', e => $('.dtrans').css('opacity', $(e.target).val()));
 
 //Move Eyes Left/Right
 $('#eyeaxisx').on('input', e => $('#dxeyes').css('left', $(e.target).val() + 'px'));
-
 
 //Move Hair Element Up/Down - Left/Right
 $('#hairy').on('input', e => $('.hairup').css('top', $(e.target).val() + 'px'));
@@ -1637,8 +1653,6 @@ $('input[type="checkbox"].bo').not(this).prop('checked', false);
 });
 });
 
-
-
 // Change Outfit
 $(document).ready(function(){
  $("input.haine:checkbox").change(function(){
@@ -1646,7 +1660,6 @@ $(".bodyoutfit").css('background-image','url('+ $(this).data("image")+')');
 $('input[type="checkbox"].haine').not(this).prop('checked', false); 
 });
 });
-
 
 // Change Items Hands
 $(document).ready(function(){
@@ -1671,7 +1684,6 @@ $("#dxeditor").css('background-image','url('+ $(this).data("image")+')');
 $('input[type="checkbox"].pwchibg').not(this).prop('checked', false); 
 });
 });
-
 
 //Delete Text
 function dxdelete1() {
@@ -1736,7 +1748,6 @@ var dxfontArray = [
 			
 });
 
-
 // Change Text Background Graphic
 var dxframeArray = [
 // 1 Empty
@@ -1751,7 +1762,6 @@ $('#text1').css({'background-image':'url(' + dxframeArray[value] + ')'});
 });
 //BG Opacity
 $('#icopa').on('input', e => $('.thetext').css('opacity', $(e.target).val()));
-
 
 //Change Text Size 1
 $('#xletter').on('input', e => $('#text1').css('letter-spacing', $(e.target).val() + 'px'));
@@ -1866,30 +1876,9 @@ $( "#clear" ).click(function() {
   });
 });
 	
-	
-	
-</script>
-
+</script>	
 	
 </body>
 </html>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
