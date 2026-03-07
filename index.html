@@ -12,8 +12,7 @@
 	<script src="js/app.js"></script>
 	-->
 	<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script src="https://code.jquery.com/ui/1.13.2/jquery-ui.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
 <link rel="stylesheet" type="text/css" href="css/app.css"/>
 	<style>
 		.row:before,.row:after{content:"";display:inline-table;clear:both;}
@@ -1443,7 +1442,7 @@ else { password.setSelectionRange(0, password.value.length);document.getElementB
 
 
 
-
+<script src="https://code.jquery.com/ui/1.13.2/jquery-ui.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <script>
 ;(function($){
@@ -1454,44 +1453,43 @@ else { password.setSelectionRange(0, password.value.length);document.getElementB
 
         // --- 1. CORE GENERATE & DOWNLOAD LOGIC ---
 
-        // Mobile-safe download trigger
+        // Function to handle download (Mobile-Friendly)
         function triggerDownload(canvas) {
             var imageData = canvas.toDataURL("image/png");
             var link = document.createElement('a');
             link.href = imageData;
             link.download = 'mypwchin.png';
-            // Required for mobile Safari/Chrome to trigger download
             document.body.appendChild(link);
             link.click();
             document.body.removeChild(link);
         }
 
         // Generate Image (The "Flip" Logic)
+        // This targets your button ID: renderpwchin
         $("#renderpwchin").on('click', function () {
             var targetElement = document.getElementById("dxeditor");
 
-            // Check if element exists before rendering
             if (!targetElement) return;
 
             // Visual feedback
             $("#renderitcool").addClass("dohighlight");
 
-            // Capture BEFORE hiding the element to avoid "not attached" error
+            // Capture the element WHILE it is visible to avoid "not attached" error
             html2canvas(targetElement, {
                 useCORS: true,
                 allowTaint: true,
-                scale: 2, // Better quality for mobile
+                scale: 2, 
                 backgroundColor: null
             }).then(function(canvas) {
                 getCanvas = canvas;
                 
-                // Clear preview area and show the flat image
+                // 1. Show the preview container and add the canvas
                 $("#renderitcool").empty().append(canvas).show();
                 
-                // NOW flip the UI: Hide editor, show generated container
+                // 2. NOW flip the UI: Hide the editor
                 $("#dxeditor").hide(); 
                 
-                // UI Controls for the generated image
+                // 3. Create or show the download/back buttons
                 if ($("#dl-group").length === 0) {
                     $("#renderitcool").after(`
                         <div id="dl-group" style="text-align:center; margin-top:15px; padding-bottom:30px;">
@@ -1503,10 +1501,12 @@ else { password.setSelectionRange(0, password.value.length);document.getElementB
                     $("#dl-group").show();
                 }
                 $("#renderitcool").removeClass("dohighlight");
+            }).catch(function(err) {
+                console.error("html2canvas error:", err);
             });
         });
 
-        // Event delegation for dynamic buttons
+        // Event delegation for dynamic buttons (needed because they are added later)
         $(document).on('click', '#downloadPng', function() {
             if (getCanvas) triggerDownload(getCanvas);
         });
@@ -1517,9 +1517,9 @@ else { password.setSelectionRange(0, password.value.length);document.getElementB
             $("#dxeditor").show();
         });
 
-        // --- 2. ORIGINAL AVATAR EDITOR LOGIC (Preserved) ---
+        // --- 2. ORIGINAL EDITOR LOGIC (Preserved) ---
 
-        // Initialize Tabs (Ensure jQuery UI is loaded in your HTML)
+        // Fix for the "tabs is not a function" error
         if ($.isFunction($.fn.tabs)) {
             $( "#tabs" ).tabs({ classes: { "ui-tabs": "highlight" } });
         }
@@ -1549,37 +1549,31 @@ else { password.setSelectionRange(0, password.value.length);document.getElementB
         $('#hairy').on('input', e => $('.hairup').css('top', $(e.target).val() + 'px'));
         $('#hairx').on('input', e => $('#hairelement').css('left', $(e.target).val() + 'px'));
 
-        // Styles & Backgrounds
+        // Styles, Items & Backgrounds
         $("input.gl:checkbox").change(function(){
             $(".glasses").css('background-image','url('+ $(this).data("image")+')');
             $('input[type="checkbox"].gl').not(this).prop('checked', false); 
         });
-
         $("input.hr:checkbox").change(function(){
             $(".hair").css('background-image','url('+ $(this).data("image")+')');
             $('input[type="checkbox"].hr').not(this).prop('checked', false); 
         });
-
         $("input.mbg:checkbox").change(function(){
             $(".bgmain").css('background-image','url('+ $(this).data("image")+')');
             $('input[type="checkbox"].mbg').not(this).prop('checked', false); 
         });
-
         $("input.bo:checkbox").change(function(){
             $(".bodybio").css('background-image','url('+ $(this).data("image")+')');
             $('input[type="checkbox"].bo').not(this).prop('checked', false);
         });
-
         $("input.haine:checkbox").change(function(){
             $(".bodyoutfit").css('background-image','url('+ $(this).data("image")+')');
             $('input[type="checkbox"].haine').not(this).prop('checked', false); 
         });
-
         $("input.items:checkbox").change(function(){
             $(".handslot").css('background-image','url('+ $(this).data("image")+')');
             $('input[type="checkbox"].items').not(this).prop('checked', false); 
         });
-
         $("input.pwchibg:checkbox").change(function(){
             $("#dxeditor").css('background-image','url('+ $(this).data("image")+')');
             $('input[type="checkbox"].pwchibg').not(this).prop('checked', false); 
@@ -1590,34 +1584,20 @@ else { password.setSelectionRange(0, password.value.length);document.getElementB
             var text1 = $("#myText1").val() || '<br>';
             $("#text1").html(text1);
         };
-
         $('#textcolor').on('input', e => $('#text1').css('color', $(e.target).val() ));
         $('#textbg').on('input', e => $('.thetext').css('background-color', $(e.target).val() ));
         $('#txtposy').on('input', e => $('#text1').css('transform', 'translateY( '+ $(e.target).val() +'px )' ));
         $('#slider').on('input', e => $('#text1').css('font-size', $(e.target).val() + 'em'));
 
-        // Dragging & Accordion
-        if ($.isFunction($.fn.draggable)) {
-            $( ".dragit" ).draggable();
-        }
-        if ($.isFunction($.fn.accordion)) {
-            $(".achead").accordion({
-                icons: { "header": "ui-icon-plus", "activeHeader": "ui-icon-minus" },
-                active: 1
-            });
-        }
-
-        // Original Highlight Actions
-        $("#vieweditor").on('click', function(){ $("#bgmain").addClass("dohighlight"); setTimeout(()=>$("#bgmain").removeClass("dohighlight"), 5700); });
-        $("#mainbuttons").on('click', function(){ $("#editorbuttons").addClass("dohighlight"); setTimeout(()=>$("#editorbuttons").removeClass("dohighlight"), 5700); });
-        $("#savedelete").on('click', function(){ $("#clear").addClass("dohighlight"); setTimeout(()=>$("#clear").removeClass("dohighlight"), 5700); });
+        // Dragging & UI Feedback
+        if ($.isFunction($.fn.draggable)) { $( ".dragit" ).draggable(); }
         
         $("#showstand").click(function() { $("#stand").toggleClass("on"); });
         $( "#clear" ).click(function() { $("canvas").fadeOut("slow", function() { $(this).remove(); }); });
     });
 })(jQuery);
 
-// Global Functions for Default/Reset
+// Global Helper Functions
 function dodefault() {
     $('.bodybio').css('background-image', 'url(img/b4.svg)');
     $('.bodyoutfit').css('background-image', 'url(img/c4.svg)');
@@ -1626,7 +1606,7 @@ function dodefault() {
     $('#dxmouth').css('background-image', 'url(img/xm5.svg)');
     $('#glasses').css('background-image', 'url(img/gl2.svg)');
     $('.handslot').css('background-image', 'url(img/items/newsp.svg)');
-};
+}
 
 function backtozero() {
     $('.bodybio').css('background-image', 'url(img/b1.svg)');
@@ -1637,11 +1617,12 @@ function backtozero() {
     $('#dxmouth').css('background-image', 'url(img/mo1.svg)');
     $('#glasses, .handslot, #txtbg, .sideleft, .sideright, #theitems, #dxeditor').css('background-image', 'url(img/empty.svg)');
     $('#text1').empty();
-};
+}
 </script>
 	
 </body>
 </html>
+
 
 
 
