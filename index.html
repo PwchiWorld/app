@@ -10,6 +10,19 @@
 <link rel="stylesheet" type="text/css" href="css/app.css"/>
 	<style>
 		.row:before,.row:after{content:"";display:inline-table;clear:both;}
+
+
+		/* Add this CSS */
+.editor-view, .generated-view {
+  transition: opacity 0.3s ease;
+}
+
+.editor-view { display: block; }
+.generated-view { display: none; }
+
+.editor-view.active-view { display: block; }
+.generated-view.active-view { display: block; }
+		
 	</style>
 </head>
 
@@ -36,8 +49,9 @@ Try not to mess things up because I'm not a developer.
 <!-- Editor Preview --->
  <div id="bgmain" class="dx-7 ptb-4 bgmain" style="background-image:url('img/editorbg0.jpg');background-repeat:no-repeat;background-size:cover;background-position:center center;padding:0;">
 <div id="stand" class="stand off"><span class="pwchi" title="I have created wonderful PNG">PWCHI</span></div>
-
-      <span style="transform:scale(1.1);"><div id="dxeditor" style="display:block;width:350px;height:480px;margin:60px auto 20px auto;box-sizing:border-box;text-align:center;background-color:transparent;overflow:hidden;position:relative;filter:drop-shadow(0 2px 7px rgba(0,0,0,.0));zindex:10;padding-top:0;background-image:url('img/empty.svg');background-repeat:no-repeat;background-size:350px 480px;background-position:0 8px;" class="show ">
+<!-- Start Flip --->
+      <span id="showitgenerated">
+		  <div id="dxeditor" style="display:block;width:350px;height:480px;margin:60px auto 20px auto;box-sizing:border-box;text-align:center;background-color:transparent;overflow:hidden;position:relative;filter:drop-shadow(0 2px 7px rgba(0,0,0,.0));zindex:10;padding-top:0;background-image:url('img/empty.svg');background-repeat:no-repeat;background-size:350px 480px;background-position:0 8px;" class="show editor-view active-view">
 						
 						<div class="dxbody" style="display:block;width:350px;height:450px;margin:0 auto -300px auto;transform: translateY(0);z-index:2;">
 						  <div class="bodybio dailypwchin" style="display:block;width:350px;height:450px;margin:0 auto -450px auto;transform: translateY(0);z-index:3;background-image:url('img/b1.svg');background-repeat:no-repeat;background-size:350px 450px;background-position:0 0;"></div>
@@ -71,8 +85,17 @@ Try not to mess things up because I'm not a developer.
 							<div id="text1" style="display:block;width:350px;height:auto;max-height:70px;color:#fff;transform:translateY(420px);padding:0;margin:-3px auto;text-align:center;z-index:999;box-sizing:border-box;" class="thetext"><span id="txtbg" class="textpy" style="display:block;width:350px;height:auto;max-height:70px;padding:0 0 1em;text-align:center;font-size:15px;font-weight:bold;background-image:url('img/empty.svg');background-repeat:no-repeat;background-size:350px 70x;background-position:0 0 ;line-height:normal;opacity: ;position:relative;"></span></div>
 							
       </div>
+
+
+<div id="generated-view" class="generated-view">
+    <div id="previewImage" class="outputimage"></div>
+    <button id="btn-Download-Image" class="download-btn">Download Image</button>
+    <button id="btn-Back-To-Editor" class="back-btn">← Back to Editor</button>
+  </div>
+
+		  
 	  </span>
-						
+		<!-- end flip -->				
 			<div id="cgcoptions">
 						<input id="bg1" type="checkbox" name="" class="bgeditor1 mbg" value="bg1" data-image="img/editorbg0.jpg"/>
 						<input id="bg2" type="checkbox" name="" class="bgeditor2 mbg" value="bg2" data-image="img/editorbg1.jpg" />
@@ -1245,11 +1268,16 @@ else { password.setSelectionRange(0, password.value.length);document.getElementB
 			</div>
 </span>
 		</div>
-		<div id="renderitcool" class="dx-12 ptb-4 checkers">
+
+
+			
+		<div id="renderitcool" class="dx-12 ptb-4 checkers" style="display:none;">
 		  <div id="previewImage" class="outputimage"><span class="dasclear" id="clear"><svg class="svg-icon-trash" viewBox="0 0 20 20">
 							<path d="M17.114,3.923h-4.589V2.427c0-0.252-0.207-0.459-0.46-0.459H7.935c-0.252,0-0.459,0.207-0.459,0.459v1.496h-4.59c-0.252,0-0.459,0.205-0.459,0.459c0,0.252,0.207,0.459,0.459,0.459h1.51v12.732c0,0.252,0.207,0.459,0.459,0.459h10.29c0.254,0,0.459-0.207,0.459-0.459V4.841h1.511c0.252,0,0.459-0.207,0.459-0.459C17.573,4.127,17.366,3.923,17.114,3.923M8.394,2.886h3.214v0.918H8.394V2.886z M14.686,17.114H5.314V4.841h9.372V17.114z M12.525,7.306v7.344c0,0.252-0.207,0.459-0.46,0.459s-0.458-0.207-0.458-0.459V7.306c0-0.254,0.205-0.459,0.458-0.459S12.525,7.051,12.525,7.306M8.394,7.306v7.344c0,0.252-0.207,0.459-0.459,0.459s-0.459-0.207-0.459-0.459V7.306c0-0.254,0.207-0.459,0.459-0.459S8.394,7.051,8.394,7.306"></path>
 						</svg></span></div>
 		</div>
+
+			
 		</div><!--/ Output Preview --->
 		
 		
@@ -1416,53 +1444,94 @@ else { password.setSelectionRange(0, password.value.length);document.getElementB
 			 onrendered: function (canvas) {
 					$("#previewImage").append(canvas);
 					getCanvas = canvas;
+					
+					// FLIP FUNCTIONALITY: When image is generated, swap the content
+					$("#showitgenerated").fadeOut(300, function() {
+						// Store the current content
+						var generatedContent = $('#showitgenerated').html();
+						
+						// Create new content with preview image and download button
+						var newContent = '<div id="previewImage" class="outputimage">' + 
+										 '<canvas></canvas>' + 
+										 '</div>' + 
+										 '<button id="btn-Download-Image" class="download-btn">Download Image</button>';
+						
+						// Replace the content
+						$('#showitgenerated').html(newContent);
+						
+						// Re-append the actual canvas (since we just have an empty canvas tag)
+						$("#previewImage").html(canvas);
+						
+						// Fade back in
+						$("#showitgenerated").fadeIn(300);
+					});
 				 }
 			 });
 		});
+// download button
+		
+// Updated JavaScript with proper flip
+$("#btn-Preview-Image").on('click', function () {
+  html2canvas(element, {
+    onrendered: function (canvas) {
+      // Clear previous and add new canvas
+      $("#previewImage").empty().append(canvas);
+      getCanvas = canvas;
+      
+      // FLIP TO GENERATED VIEW
+      $("#dxeditor").removeClass('active-view').hide();
+      $("#generated-view").addClass('active-view').show();
+    }
+  });
+});
 
-		$("#btn-Convert-Html2Image").on('click', function () {
+// Back button functionality
+$("#btn-Back-To-Editor").on('click', function() {
+  $("#generated-view").removeClass('active-view').hide();
+  $("#dxeditor").addClass('active-view').show();
+});
 
-			var imgageData = getCanvas.toDataURL("image/png");
-		});
+// Download button (already mobile-friendly from previous fix)
+$("#btn-Download-Image").on('click', function () {
+  var imageData = getCanvas.toDataURL("image/png");
+  var isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+  
+  if (isMobile) {
+    var newWindow = window.open();
+    if (newWindow) {
+      newWindow.document.write('<html><head><title>Your Pwchin</title>');
+      newWindow.document.write('<meta name="viewport" content="width=device-width, initial-scale=1.0">');
+      newWindow.document.write('<style>body{margin:0;display:flex;justify-content:center;align-items:center;min-height:100vh;background:#f0f0f0;}</style></head>');
+      newWindow.document.write('<body><img src="' + imageData + '" style="max-width:100%;height:auto;" /></body></html>');
+      newWindow.document.close();
+    } else {
+      alert("Long-press the image below to save it");
+    }
+  } else {
+    var downloadLink = document.createElement('a');
+    downloadLink.href = imageData;
+    downloadLink.download = 'mypwchin.png';
+    document.body.appendChild(downloadLink);
+    downloadLink.click();
+    document.body.removeChild(downloadLink);
+  }
+});
 
-		// MODIFIED DOWNLOAD BUTTON FOR MOBILE SUPPORT
-		$("#btn-Download-Image").on('click', function () {
-			var imageData = getCanvas.toDataURL("image/png");
-			
-			// Check if we're on a mobile device (simple user agent check)
-			var isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
-			
-			if (isMobile) {
-				// MOBILE FRIENDLY APPROACH: Open in new tab for long-press saving
-				var newWindow = window.open();
-				if (newWindow) {
-					// Success - show image in new tab with save instructions
-					newWindow.document.write('<html><head><title>Your Pwchin - Long press to save</title>');
-					newWindow.document.write('<meta name="viewport" content="width=device-width, initial-scale=1.0">');
-					newWindow.document.write('<style>body{margin:0;display:flex;justify-content:center;align-items:center;min-height:100vh;background:#f0f0f0;font-family:sans-serif;}');
-					newWindow.document.write('.container{text-align:center;padding:20px;}');
-					newWindow.document.write('img{max-width:100%;height:auto;border-radius:8px;box-shadow:0 4px 12px rgba(0,0,0,0.15);}');
-					newWindow.document.write('.instruction{margin-top:20px;color:#666;font-size:16px;}</style></head>');
-					newWindow.document.write('<body><div class="container">');
-					newWindow.document.write('<img src="' + imageData + '" alt="Your Pwchin" />');
-					newWindow.document.write('<div class="instruction">📱 Long press on the image to save it to your device</div>');
-					newWindow.document.write('</div></body></html>');
-					newWindow.document.close();
-				} else {
-					// Popup blocked - fallback to preview area
-					alert("Please allow popups or use this method: Long-press the generated image below to save");
-					// Show canvas in preview area
-					$("#previewImage").html(getCanvas);
-				}
-			} else {
-				// DESKTOP APPROACH: Traditional download link
-				var downloadLink = document.createElement('a');
-				downloadLink.href = imageData;
-				downloadLink.download = 'mypwchin.png';
-				document.body.appendChild(downloadLink);
-				downloadLink.click();
-				document.body.removeChild(downloadLink);
-			}
+// end download button		
+		
+		// ADDED: Function to flip back to editor view (optional - can be triggered by another button)
+		$("#btn-Back-To-Editor").on('click', function () {
+			$("#showitgenerated").fadeOut(300, function() {
+				// Restore original editor content
+				var originalContent = '<div id="dxeditor" class="allitems">' + 
+									  '<!-- Your original editor content here -->' + 
+									  '</div>';
+				
+				// You might want to store the original HTML somewhere
+				// For now, we'll just show the canvas is removed
+				$('#showitgenerated').html('<div id="dxeditor" class="allitems">' + $('#dxeditor').html() + '</div>');
+				$("#showitgenerated").fadeIn(300);
+			});
 		});
 		
 	});
@@ -1796,9 +1865,9 @@ $( "#clear" ).click(function() {
 	
 </script>
 
-
 </body>
 </html>
+
 
 
 
