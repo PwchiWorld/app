@@ -1443,72 +1443,31 @@ else { password.setSelectionRange(0, password.value.length);document.getElementB
 	var getCanvas; // global variable
 
 	// Function to handle download (SIMPLE & WORKS ON MOBILE)
-	function setupDownloadButton() {
-	  $("#btn-Download-Image").off('click').on('click', function () {
-		if (!getCanvas) {
-		  alert("Please generate an image first");
-		  return;
-		}
-		
-		// Get image data
-		var imageData = getCanvas.toDataURL("image/png");
-		
-		// SIMPLE APPROACH: Open in new tab - ALWAYS works on mobile
-		var newWindow = window.open('about:blank', '_blank');
-		
-		if (newWindow) {
-		  // Write image to new window with save instructions
-		  newWindow.document.write(`
-			<html>
-			  <head>
-				<title>Your Pwchin</title>
-				<meta name="viewport" content="width=device-width, initial-scale=1.0">
-				<style>
-				  body { 
-					margin: 0; 
-					display: flex; 
-					justify-content: center; 
-					align-items: center; 
-					min-height: 100vh; 
-					background: #333;
-					font-family: Arial, sans-serif;
-				  }
-				  .container {
-					text-align: center;
-					padding: 20px;
-				  }
-				  img { 
-					max-width: 100%; 
-					height: auto; 
-					border-radius: 8px;
-					box-shadow: 0 4px 12px rgba(0,0,0,0.3);
-				  }
-				  .instructions {
-					margin-top: 20px;
-					color: white;
-					background: #000;
-					padding: 12px 20px;
-					border-radius: 25px;
-					font-size: 16px;
-				  }
-				</style>
-			  </head>
-			  <body>
-				<div class="container">
-				  <img src="${imageData}" alt="Your Pwchin" />
-				  <div class="instructions">📱 LONG PRESS IMAGE → SAVE</div>
-				</div>
-			  </body>
-			</html>
-		  `);
-		  newWindow.document.close();
-		} else {
-		  // Popup blocked - show image in current page
-		  alert("Popup blocked. Long press on the image below to save.");
-		  $("#previewImage").html(getCanvas);
-		}
-	  });
-	}
+// Function to handle download (DESKTOP + MOBILE)
+function setupDownloadButton() {
+  $("#btn-Download-Image").off('click').on('click', function () {
+    if (!getCanvas) {
+      alert("Please generate an image first");
+      return;
+    }
+    
+    var imageData = getCanvas.toDataURL("image/png");
+    var isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+    
+    if (isMobile) {
+      // MOBILE: Open image in new tab (this ALWAYS works)
+      window.location.href = imageData;
+    } else {
+      // DESKTOP: Download link
+      var link = document.createElement('a');
+      link.href = imageData;
+      link.download = 'mypwchin.png';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
+  });
+}
 
 	// Generate and Flip functionality
 	$("#btn-Preview-Image").on('click', function () {
@@ -1864,6 +1823,7 @@ $( "#clear" ).click(function() {
 	
 </body>
 </html>
+
 
 
 
