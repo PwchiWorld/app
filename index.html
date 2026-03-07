@@ -1453,57 +1453,64 @@ else { password.setSelectionRange(0, password.value.length);document.getElementB
 	var getCanvas; // global variable
 
 	// Function to handle download (WORKS ON ALL DEVICES)
-// Fixed setupDownloadButton function for better mobile support
+/**
+ * Robust Download Button Fix
+ * - Fixes the "stuck in processing" bug with a fail-safe timeout
+ * - Improved mobile support for iOS/Android
+ * - Better error handling for canvas operations
+ */
 function setupDownloadButton() {
   $("#btn-Download-Image").off('click').on('click', function () {
+    var $btn = $(this);
+    var originalText = 'Download Image'; // Hardcoded reset to be safe
+    
     if (!getCanvas) {
       alert("Please generate an image first");
       return;
     }
-    
-    var $btn = $(this);
-    var originalText = $btn.text();
-    $btn.text('Processing...');
-    
-    // Convert canvas to blob for better mobile support
-    getCanvas.toBlob(function(blob) {
-      var url = URL.createObjectURL(blob);
-      var filename = 'mypwchin.png';
-      
-      // Check if it's a mobile device
-      var isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
-      
-      if (isMobile) {
-        // MOBILE FIX: 
-        // 1. Create a persistent link that stays in DOM for a bit
-        // 2. Open a new window immediately if download fails
-        // 3. Use a cleaner approach for the "Save Image" instructions
-        
-        var link = document.createElement('a');
-        link.href = url;
-        link.download = filename;
-        link.style.display = 'none';
-        document.body.appendChild(link);
-        link.click();
-        
-        // Mobile fallback: Open in a new tab for manual saving
-        // This is often necessary because mobile browsers (especially iOS Safari) 
-        // frequently block programmatic downloads from blobs.
-        setTimeout(function() {
+
+    // 1. Visual Feedback
+    $btn.text('Processing...').prop('disabled', true);
+
+    // 2. FAIL-SAFE: Always reset the button after 10 seconds 
+    // in case something goes wrong with the blob conversion
+    var failSafe = setTimeout(function() {
+      $btn.text(originalText).prop('disabled', false);
+    }, 10000);
+
+    try {
+      // Convert canvas to blob
+      getCanvas.toBlob(function(blob) {
+        // Clear the fail-safe as we've succeeded or reached the blob callback
+        clearTimeout(failSafe);
+
+        if (!blob) {
+          alert("Could not generate image data. Please try again.");
+          $btn.text(originalText).prop('disabled', false);
+          return;
+        }
+
+        var url = URL.createObjectURL(blob);
+        var filename = 'mypwchin.png';
+        var isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+
+        if (isMobile) {
+          // MOBILE LOGIC: Open in new tab is most reliable for "Save Image"
           var newWindow = window.open(url, '_blank');
+          
+          // If popup was blocked or failed, use the document.write fallback
           if (!newWindow || newWindow.closed || typeof newWindow.closed == 'undefined') {
-            // If window.open was blocked, create the custom overlay/page
-            var newTab = window.open();
-            if (newTab) {
-              newTab.document.write(`
+            var fallbackTab = window.open();
+            if (fallbackTab) {
+              fallbackTab.document.write(`
                 <html>
                   <head>
-                    <title>Save Your Image</title>
+                    <title>Save Image</title>
                     <meta name="viewport" content="width=device-width, initial-scale=1.0">
                     <style>
-                      body { margin: 0; display: flex; flex-direction: column; justify-content: center; align-items: center; min-height: 100vh; background: #1a1a1a; font-family: sans-serif; color: white; }
-                      img { max-width: 90%; border-radius: 8px; box-shadow: 0 4px 20px rgba(0,0,0,0.5); }
-                      .hint { margin-top: 20px; padding: 12px 24px; background: #333; border-radius: 50px; font-size: 14px; }
+                      body { margin: 0; display: flex; flex-direction: column; justify-content: center; align-items: center; min-height: 100vh; background: #1a1a1a; font-family: sans-serif; color: white; text-align: center; }
+                      img { max-width: 90%; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); margin-bottom: 20px; }
+                      .hint { padding: 15px 30px; background: #444; border-radius: 50px; font-size: 16px; font-weight: bold; }
                     </style>
                   </head>
                   <body>
@@ -1513,31 +1520,40 @@ function setupDownloadButton() {
                 </html>
               `);
             } else {
-              alert("Please allow popups to save your image on mobile, or long-press the preview image.");
+              // Final fallback if all window.open fail: direct link
+              alert("Tap the image that appears to save it.");
+              window.location.href = url;
             }
           }
-          
-          document.body.removeChild(link);
-          $btn.text(originalText);
-          // Don't revoke immediately on mobile as the new tab needs the URL
-          setTimeout(() => URL.revokeObjectURL(url), 10000); 
-        }, 500);
+        } else {
+          // DESKTOP LOGIC: Standard hidden link download
+          var link = document.createElement('a');
+          link.href = url;
+          link.download = filename;
+          link.style.display = 'none';
+          document.body.appendChild(link);
+          link.click();
+          setTimeout(function() { document.body.removeChild(link); }, 100);
+        }
+
+        // Reset button state
+        $btn.text(originalText).prop('disabled', false);
         
-      } else {
-        // DESKTOP: Standard download approach
-        var link = document.createElement('a');
-        link.href = url;
-        link.download = filename;
-        link.click();
-        
-        setTimeout(function() {
-          URL.revokeObjectURL(url);
-          $btn.text(originalText);
-        }, 100);
-      }
-    }, 'image/png');
+        // Clean up URL after a delay (mobile needs it to stay active for the new tab)
+        setTimeout(function() { URL.revokeObjectURL(url); }, 30000);
+
+      }, 'image/png');
+    } catch (err) {
+      console.error("Download Error:", err);
+      clearTimeout(failSafe);
+      $btn.text(originalText).prop('disabled', false);
+      alert("An error occurred while preparing the download.");
+    }
   });
 }
+
+
+		
 
 	// Generate and Flip functionality
 	$("#btn-Preview-Image").on('click', function () {
@@ -1896,6 +1912,7 @@ $( "#clear" ).click(function() {
 	
 </body>
 </html>
+
 
 
 
