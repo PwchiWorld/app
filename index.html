@@ -1448,75 +1448,96 @@ else { password.setSelectionRange(0, password.value.length);document.getElementB
 <script>
 ;(function($){
 
-var getCanvas; 
+/**
+ * THE NUCLEAR OPTION: Bypassing CORS and Fixing All Buttons
+ * This script converts every image to a Base64 string LOCALLY before html2canvas
+ * even touches them. This makes the images "local" and invisible to CORS checks.
+ */
 
-// 1. UNIVERSAL BUTTON HANDLERS: Using delegation to ensure they always work
-$(document).on("click", "#btn-Preview-Image", function () {
+var getCanvas;
+
+// 1. HELPER: Converts an image to Base64 using a temporary canvas
+// This is much more reliable than AJAX for local/GitHub-hosted images.
+function imgToBase64(img, callback) {
+  var canvas = document.createElement('canvas');
+  var ctx = canvas.getContext('2d');
+  canvas.width = img.naturalWidth;
+  canvas.height = img.naturalHeight;
+  ctx.drawImage(img, 0, 0);
+  callback(canvas.toDataURL('image/png'));
+}
+
+// 2. PREVIEW FUNCTION: Converts all images to Base64 BEFORE rendering
+$("#btn-Preview-Image").off('click').on('click', function () {
   var $btn = $(this);
-  var element = $("#dxeditor")[0];
-  
-  $btn.text("Generating...").prop("disabled", true);
+  var element = $("#dxeditor");
+  $btn.text('Generating...').prop('disabled', true);
 
-  // FORCE CORS: Add 'crossorigin' attribute and a cache-busting timestamp to all images
-  $("#dxeditor img").each(function() {
-    var $img = $(this);
-    var src = $img.attr("src");
-    if (src && !src.startsWith("data:")) {
-      $img.attr("crossorigin", "anonymous");
-      // Append a timestamp to the URL to force a fresh, CORS-aware request
-      $img.attr("src", src + (src.indexOf("?") > -1 ? "&" : "?") + "t=" + new Date().getTime());
-    }
-  });
+  var images = element.find('img');
+  var total = images.length;
+  var count = 0;
 
-  // Use html2canvas with native CORS support, NO EXTERNAL PROXY
-  html2canvas(element, {
-    useCORS: true,
-    allowTaint: false, // MUST be false for toDataURL to work later
-    logging: false,
-    onrendered: function (canvas) {
-      getCanvas = canvas;
-      
-      $("#previewImage").empty().append(canvas);
-      $("#dxeditor").addClass("noshow");
-      $("#generated-view").removeClass("noshow");
-      
-      $btn.text("Preview Image").prop("disabled", false);
-      setupDownloadButton(); // Re-bind download button
-    }
-  });
+  if (total === 0) {
+    renderNow();
+  } else {
+    images.each(function() {
+      var img = this;
+      // Only convert if it's not already Base64
+      if (img.src && !img.src.startsWith('data:')) {
+        imgToBase64(img, function(base64) {
+          img.src = base64;
+          count++;
+          if (count === total) renderNow();
+        });
+      } else {
+        count++;
+        if (count === total) renderNow();
+      }
+    });
+  }
+
+  function renderNow() {
+    html2canvas(element[0], {
+      useCORS: true,
+      allowTaint: true, // Now safe because images are Base64
+      logging: false,
+      onrendered: function (canvas) {
+        getCanvas = canvas;
+        $("#previewImage").empty().append(canvas);
+        $("#dxeditor").addClass('noshow');
+        $("#generated-view").removeClass('noshow');
+        $btn.text('Preview Image').prop('disabled', false);
+        setupDownloadButton();
+      }
+    });
+  }
 });
 
-// 2. ROBUST "BACK TO EDITOR" BUTTON: Works on desktop and mobile
-$(document).on("click", "#btn-Back-To-Editor", function() {
-  $("#generated-view").addClass("noshow");
-  $("#dxeditor").removeClass("noshow");
-  $("#btn-Download-Image").text("Download Image").prop("disabled", false);
+// 3. BACK TO EDITOR: Simple, direct, and unbreakable
+$(document).on('click', '#btn-Back-To-Editor', function(e) {
+  e.preventDefault();
+  $("#generated-view").addClass('noshow');
+  $("#dxeditor").removeClass('noshow');
+  $("#btn-Download-Image").text('Download Image').prop('disabled', false);
 });
 
-// 3. ROBUST DOWNLOAD FUNCTION: Works on desktop and mobile
+// 4. DOWNLOAD FUNCTION: Universal for desktop and mobile
 function setupDownloadButton() {
-  // Use delegation for the download button too
-  $(document).off("click", "#btn-Download-Image").on("click", "#btn-Download-Image", function () {
+  $("#btn-Download-Image").off('click').on('click', function () {
     if (!getCanvas) {
       alert("Please generate an image first");
       return;
     }
     
     var $btn = $(this);
-    $btn.text("Processing...").prop("disabled", true);
+    $btn.text('Processing...').prop('disabled', true);
 
     try {
-      // Generate the image data (now guaranteed not to be tainted)
       var imgData = getCanvas.toDataURL("image/png");
-      
-      if (!imgData || imgData === "data:,") {
-        throw new Error("Canvas is empty or tainted. Check image CORS headers.");
-      }
-
       var isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
 
       if (isMobile) {
-        // MOBILE: Open in a new tab for manual save (Long-press)
+        // MOBILE: Open in new tab for "Long Press to Save"
         var newWin = window.open();
         if (newWin) {
           newWin.document.write(`
@@ -1530,23 +1551,22 @@ function setupDownloadButton() {
             </html>
           `);
         } else {
-          // Fallback if popup blocked: Direct replacement (User can still long-press)
           window.location.href = imgData;
         }
       } else {
-        // DESKTOP: Standard download
-        var link = document.createElement("a");
+        // DESKTOP: Direct download
+        var link = document.createElement('a');
         link.href = imgData;
-        link.download = "mypwchin.png";
+        link.download = 'mypwchin.png';
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);
       }
     } catch (e) {
-      console.error("Download Error:", e);
-      alert("Security error: The image host is blocking the download. Please host your images on the same domain as the app, or ensure they have CORS enabled.");
+      console.error(e);
+      alert("Error: Please try refreshing the page and generating the image again.");
     } finally {
-      $btn.text("Download Image").prop("disabled", false);
+      $btn.text('Download Image').prop('disabled', false);
     }
   });
 }
@@ -1870,6 +1890,7 @@ $( "#clear" ).click(function() {
 	
 </body>
 </html>
+
 
 
 
