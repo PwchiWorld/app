@@ -1474,54 +1474,79 @@ else { password.setSelectionRange(0, password.value.length);document.getElementB
 
         // Generate and Flip functionality
         // We use the ID #renderpwchin to match your existing button
-        $("#renderpwchin").on('click', function () {
-            var targetElement = document.getElementById("dxeditor");
+// --- UPDATED GENERATE & DOWNLOAD LOGIC ---
 
-            // Visual Feedback
-            $("#renderitcool").addClass("dohighlight");
-            setTimeout(() => $("#renderitcool").removeClass("dohighlight"), 5700);
+$("#renderpwchin").on('click', function() {
+    // 1. Get the element while it is still visible and attached
+    const target = document.getElementById('dxeditor');
+    
+    if (!target) {
+        console.error("Editor element not found!");
+        return;
+    }
 
-            // Using modern html2canvas (Promise based)
-            html2canvas(targetElement, {
-                useCORS: true,
-                allowTaint: true,
-                scale: 2, // High resolution for mobile
-                backgroundColor: null
-            }).then(function(canvas) {
-                getCanvas = canvas;
-                
-                // Clear and Show Preview
-                $("#renderitcool").empty().append(canvas).show();
-                
-                // Flip the UI
-                $("#dxeditor").hide(); // Hide the editor
-                
-                // Create/Show buttons if they don't exist
-                if ($("#dl-group").length === 0) {
-                    $("#renderitcool").after(`
-                        <div id="dl-group" style="text-align:center; margin-top:10px; padding-bottom:20px;">
-                            <button id="downloadPng" style="padding:10px; background:#2ecc71; color:white; border:none; border-radius:5px;">Download PNG</button>
-                            <button id="editAgain" style="padding:10px; background:#e74c3c; color:white; border:none; border-radius:5px; margin-left:10px;">Back to Editor</button>
-                        </div>
-                    `);
-                } else {
-                    $("#dl-group").show();
-                }
-            }).catch(function(err) {
-                console.error("Canvas Error: ", err);
-            });
-        });
+    // Visual feedback
+    $("#renderitcool").addClass("dohighlight");
 
-        // Use Event Delegation for dynamic buttons
-        $(document).on('click', '#downloadPng', function() {
-            triggerDownload();
-        });
+    // 2. Capture BEFORE hiding the editor
+    html2canvas(target, {
+        useCORS: true,
+        allowTaint: true,
+        backgroundColor: null,
+        scale: 2,
+        logging: false
+    }).then(canvas => {
+        // Now that we have the canvas, we can safely flip the UI
+        $("#dxeditor").hide(); 
+        
+        // Show the preview container and add the canvas
+        $("#renderitcool").show().empty().append(canvas);
+        
+        // Convert canvas to a proper Image for better mobile "Save As" support
+        const imgData = canvas.toDataURL("image/png");
+        
+        // Ensure buttons exist and are linked to the new data
+        if ($("#dl-group").length === 0) {
+            $("#renderitcool").after(`
+                <div id="dl-group" style="text-align:center; margin-top:15px; padding-bottom:30px;">
+                    <button id="downloadPng" style="padding:12px 25px; background:#2ecc71; color:#fff; border:none; border-radius:8px; font-weight:bold;">Download PNG</button>
+                    <button id="editAgain" style="padding:12px 25px; background:#e74c3c; color:#fff; border:none; border-radius:8px; margin-left:10px; font-weight:bold;">Back to Editor</button>
+                </div>
+            `);
+        } else {
+            $("#dl-group").show();
+        }
 
-        $(document).on('click', '#editAgain', function() {
-            $("#renderitcool").hide();
-            $("#dl-group").hide();
-            $("#dxeditor").show();
-        });
+        // Store the current image data on the button for the click handler
+        $("#downloadPng").data("img", imgData);
+        
+        // Remove highlight
+        $("#renderitcool").removeClass("dohighlight");
+    }).catch(err => {
+        console.error("Manual Catch - html2canvas error:", err);
+    });
+});
+
+// Mobile-Safe Download Handler using the hidden link method
+$(document).on('click', '#downloadPng', function() {
+    const dataUrl = $(this).data("img");
+    if (!dataUrl) return;
+
+    const link = document.createElement('a');
+    link.href = dataUrl;
+    link.download = 'pwchin-avatar.png';
+    // Append to body is required for some mobile browsers to trigger click
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+});
+
+// Toggle Back to Editor
+$(document).on('click', '#editAgain', function() {
+    $("#renderitcool").hide();
+    $("#dl-group").hide();
+    $("#dxeditor").show();
+});
 
         // --- 2. ORIGINAL AVATAR EDITOR LOGIC ---
 
@@ -1646,6 +1671,7 @@ function backtozero() {
 	
 </body>
 </html>
+
 
 
 
