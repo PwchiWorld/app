@@ -1425,17 +1425,46 @@ else { password.setSelectionRange(0, password.value.length);document.getElementB
 			var imgageData = getCanvas.toDataURL("image/png");
 		});
 
-//Added
-	$("#btn-Download-Image").on('click', function () {
-	var imageData = getCanvas.toDataURL("image/png");
-	var downloadLink = document.createElement('a');
-	downloadLink.href = imageData;
-	downloadLink.download = 'mypwchin.png';
-	document.body.appendChild(downloadLink);
-	downloadLink.click();
-	document.body.removeChild(downloadLink);
-});
-//Added		
+		// MODIFIED DOWNLOAD BUTTON FOR MOBILE SUPPORT
+		$("#btn-Download-Image").on('click', function () {
+			var imageData = getCanvas.toDataURL("image/png");
+			
+			// Check if we're on a mobile device (simple user agent check)
+			var isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+			
+			if (isMobile) {
+				// MOBILE FRIENDLY APPROACH: Open in new tab for long-press saving
+				var newWindow = window.open();
+				if (newWindow) {
+					// Success - show image in new tab with save instructions
+					newWindow.document.write('<html><head><title>Your Pwchin - Long press to save</title>');
+					newWindow.document.write('<meta name="viewport" content="width=device-width, initial-scale=1.0">');
+					newWindow.document.write('<style>body{margin:0;display:flex;justify-content:center;align-items:center;min-height:100vh;background:#f0f0f0;font-family:sans-serif;}');
+					newWindow.document.write('.container{text-align:center;padding:20px;}');
+					newWindow.document.write('img{max-width:100%;height:auto;border-radius:8px;box-shadow:0 4px 12px rgba(0,0,0,0.15);}');
+					newWindow.document.write('.instruction{margin-top:20px;color:#666;font-size:16px;}</style></head>');
+					newWindow.document.write('<body><div class="container">');
+					newWindow.document.write('<img src="' + imageData + '" alt="Your Pwchin" />');
+					newWindow.document.write('<div class="instruction">📱 Long press on the image to save it to your device</div>');
+					newWindow.document.write('</div></body></html>');
+					newWindow.document.close();
+				} else {
+					// Popup blocked - fallback to preview area
+					alert("Please allow popups or use this method: Long-press the generated image below to save");
+					// Show canvas in preview area
+					$("#previewImage").html(getCanvas);
+				}
+			} else {
+				// DESKTOP APPROACH: Traditional download link
+				var downloadLink = document.createElement('a');
+				downloadLink.href = imageData;
+				downloadLink.download = 'mypwchin.png';
+				document.body.appendChild(downloadLink);
+				downloadLink.click();
+				document.body.removeChild(downloadLink);
+			}
+		});
+		
 	});
 	
 })(jQuery);
@@ -1445,7 +1474,7 @@ else { password.setSelectionRange(0, password.value.length);document.getElementB
 $( "#tabs" ).tabs({
   classes: {
     "ui-tabs": "highlight",
-			//	active: 1
+				//	active: 1
   }
 });
 		
@@ -1770,5 +1799,6 @@ $( "#clear" ).click(function() {
 
 </body>
 </html>
+
 
 
