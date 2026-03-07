@@ -1447,157 +1447,95 @@ else { password.setSelectionRange(0, password.value.length);document.getElementB
 <script>
 ;(function($){
 
-	$(document).ready(function(){
+	var getCanvas; 
 
-	var element = $("#dxeditor");
-	var getCanvas; // global variable
+// 1. UPDATED PREVIEW FUNCTION (This is where the canvas is actually created)
+$("#btn-Preview-Image").off('click').on('click', function () {
+  var element = $("#dxeditor")[0]; // Ensure we get the DOM element
+  
+  // Show loading state on preview button if you want
+  $(this).text('Generating...');
 
-	// Function to handle download (WORKS ON ALL DEVICES)
-/**
- * Robust Download Button Fix
- * - Fixes the "stuck in processing" bug with a fail-safe timeout
- * - Improved mobile support for iOS/Android
- * - Better error handling for canvas operations
- */
+  html2canvas(element, {
+    useCORS: true,          // CRITICAL: Allows images from other domains (like GitHub)
+    allowTaint: true,       // Allows the canvas to be "tainted" by cross-origin images
+    logging: false,
+    onrendered: function (canvas) {
+      getCanvas = canvas;
+      
+      $("#previewImage").empty().append(canvas);
+      $("#dxeditor").addClass('noshow');
+      $("#generated-view").removeClass('noshow');
+      
+      $("#btn-Preview-Image").text('Preview Image'); // Reset text
+      setupDownloadButton(); // Re-bind download button
+    }
+  });
+});
+
+// 2. UPDATED DOWNLOAD FUNCTION
 function setupDownloadButton() {
   $("#btn-Download-Image").off('click').on('click', function () {
-    var $btn = $(this);
-    var originalText = 'Download Image'; // Hardcoded reset to be safe
-    
     if (!getCanvas) {
       alert("Please generate an image first");
       return;
     }
-
-    // 1. Visual Feedback
+    
+    var $btn = $(this);
     $btn.text('Processing...').prop('disabled', true);
 
-    // 2. FAIL-SAFE: Always reset the button after 10 seconds 
-    // in case something goes wrong with the blob conversion
-    var failSafe = setTimeout(function() {
-      $btn.text(originalText).prop('disabled', false);
-    }, 10000);
-
     try {
-      // Convert canvas to blob
-      getCanvas.toBlob(function(blob) {
-        // Clear the fail-safe as we've succeeded or reached the blob callback
-        clearTimeout(failSafe);
+      // Use toDataURL as a more compatible fallback for older mobile browsers
+      // if toBlob fails or is restricted.
+      var imgData = getCanvas.toDataURL("image/png");
+      
+      if (!imgData || imgData === "data:,") {
+        throw new Error("Canvas is empty or tainted");
+      }
 
-        if (!blob) {
-          alert("Could not generate image data. Please try again.");
-          $btn.text(originalText).prop('disabled', false);
-          return;
-        }
+      var isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
 
-        var url = URL.createObjectURL(blob);
-        var filename = 'mypwchin.png';
-        var isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
-
-        if (isMobile) {
-          // MOBILE LOGIC: Open in new tab is most reliable for "Save Image"
-          var newWindow = window.open(url, '_blank');
-          
-          // If popup was blocked or failed, use the document.write fallback
-          if (!newWindow || newWindow.closed || typeof newWindow.closed == 'undefined') {
-            var fallbackTab = window.open();
-            if (fallbackTab) {
-              fallbackTab.document.write(`
-                <html>
-                  <head>
-                    <title>Save Image</title>
-                    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-                    <style>
-                      body { margin: 0; display: flex; flex-direction: column; justify-content: center; align-items: center; min-height: 100vh; background: #1a1a1a; font-family: sans-serif; color: white; text-align: center; }
-                      img { max-width: 90%; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); margin-bottom: 20px; }
-                      .hint { padding: 15px 30px; background: #444; border-radius: 50px; font-size: 16px; font-weight: bold; }
-                    </style>
-                  </head>
-                  <body>
-                    <img src="${url}" />
-                    <div class="hint">📱 Long press image to Save</div>
-                  </body>
-                </html>
-              `);
-            } else {
-              // Final fallback if all window.open fail: direct link
-              alert("Tap the image that appears to save it.");
-              window.location.href = url;
-            }
-          }
+      if (isMobile) {
+        // For mobile, opening a new tab with the image is the ONLY 100% reliable way
+        var newWin = window.open();
+        if (newWin) {
+          newWin.document.write(`
+            <html>
+              <body style="margin:0;display:flex;flex-direction:column;align-items:center;justify-content:center;background:#111;color:white;font-family:sans-serif;">
+                <img src="${imgData}" style="max-width:90%;border-radius:10px;box-shadow:0 5px 20px rgba(0,0,0,0.5);margin-bottom:20px;"/>
+                <div style="padding:15px 25px;background:#333;border-radius:50px;">📱 Long press image to Save</div>
+              </body>
+            </html>
+          `);
         } else {
-          // DESKTOP LOGIC: Standard hidden link download
-          var link = document.createElement('a');
-          link.href = url;
-          link.download = filename;
-          link.style.display = 'none';
-          document.body.appendChild(link);
-          link.click();
-          setTimeout(function() { document.body.removeChild(link); }, 100);
+          // If popup blocked, try direct redirect
+          window.location.href = imgData;
         }
-
-        // Reset button state
-        $btn.text(originalText).prop('disabled', false);
-        
-        // Clean up URL after a delay (mobile needs it to stay active for the new tab)
-        setTimeout(function() { URL.revokeObjectURL(url); }, 30000);
-
-      }, 'image/png');
-    } catch (err) {
-      console.error("Download Error:", err);
-      clearTimeout(failSafe);
-      $btn.text(originalText).prop('disabled', false);
-      alert("An error occurred while preparing the download.");
+      } else {
+        // Desktop download
+        var link = document.createElement('a');
+        link.href = imgData;
+        link.download = 'mypwchin.png';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+      }
+    } catch (e) {
+      console.error(e);
+      // If toDataURL fails (usually due to CORS/Taint), we try to alert the user 
+      // but this usually means the images themselves need 'crossorigin="anonymous"' in HTML
+      alert("Security error: Images from different domains are blocking the download. Make sure your <img> tags have crossorigin='anonymous' or are hosted on the same domain.");
+    } finally {
+      $btn.text('Download Image').prop('disabled', false);
     }
   });
 }
-
-
-		
-
-	// Generate and Flip functionality
-	$("#btn-Preview-Image").on('click', function () {
-	  html2canvas(element, {
-		onrendered: function (canvas) {
-		  // Store the canvas globally
-		  getCanvas = canvas;
-		  
-		  // Clear preview area and append the NEW canvas
-		  $("#previewImage").empty().append(canvas);
-		  
-		  // PROPER SWAP: Hide editor, show generated view
-		  $("#dxeditor").addClass('noshow');
-		  $("#generated-view").removeClass('noshow');
-		  
-		  // Make sure download button works with this canvas
-		  setupDownloadButton();
-		}
-	  });
-	});
-
-	// Back button functionality
-	$("#btn-Back-To-Editor").on('click', function() {
-	  // PROPER SWAP: Show editor, hide generated view
-	  $("#generated-view").addClass('noshow');
-	  $("#dxeditor").removeClass('noshow');
-	  
-	  // Reset download button text
-	  $("#btn-Download-Image").text('Download Image');
-	});
-
-	// Initialize download button
-	setupDownloadButton();
-
-	// Original Convert button (kept for compatibility)
-	$("#btn-Convert-Html2Image").on('click', function () {
-	  if (getCanvas) {
-		var imgageData = getCanvas.toDataURL("image/png");
-	  }
-	});
-
-	});
 	
 })(jQuery);
+
+
+
+	
 
 $( "#tabs" ).tabs({
   classes: {
@@ -1912,6 +1850,7 @@ $( "#clear" ).click(function() {
 	
 </body>
 </html>
+
 
 
 
