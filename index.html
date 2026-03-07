@@ -89,8 +89,9 @@ Try not to mess things up because I'm not a developer.
 
 
 
-  <!-- Generated View (hidden by default) -->
-<div id="generated-view" class="noshow">
+
+ <!-- Generated View (hidden by default) -->
+  <div id="generated-view" class="noshow">
     <div id="previewImage" class="outputimage"></div>
     <button id="btn-Download-Image">Download Image</button>
     <button id="btn-Back-To-Editor">← Back to Editor</button>
@@ -1433,8 +1434,7 @@ else { password.setSelectionRange(0, password.value.length);document.getElementB
 </div>
 <!--/ Main Wrapper --->
 
-	
-<script>
+	<script>
 ;(function($){
 
 	$(document).ready(function(){
@@ -1442,7 +1442,7 @@ else { password.setSelectionRange(0, password.value.length);document.getElementB
 	var element = $("#dxeditor");
 	var getCanvas; // global variable
 
-	// Function to handle download (WORKS ON ALL DEVICES)
+	// Function to handle download (SIMPLE & WORKS ON MOBILE)
 	function setupDownloadButton() {
 	  $("#btn-Download-Image").off('click').on('click', function () {
 		if (!getCanvas) {
@@ -1450,85 +1450,63 @@ else { password.setSelectionRange(0, password.value.length);document.getElementB
 		  return;
 		}
 		
-		// Show loading state
-		$(this).text('Processing...');
+		// Get image data
+		var imageData = getCanvas.toDataURL("image/png");
 		
-		// Convert canvas to blob for better mobile support
-		getCanvas.toBlob(function(blob) {
-		  var url = URL.createObjectURL(blob);
-		  var link = document.createElement('a');
-		  link.href = url;
-		  link.download = 'mypwchin.png';
-		  
-		  // For mobile, make sure it's visible and triggered properly
-		  link.style.position = 'absolute';
-		  link.style.left = '-9999px';
-		  document.body.appendChild(link);
-		  
-		  // Trigger click
-		  link.click();
-		  
-		  // Clean up
-		  setTimeout(function() {
-			document.body.removeChild(link);
-			URL.revokeObjectURL(url);
-			$("#btn-Download-Image").text('Download Image');
-		  }, 1000);
-		  
-		  // Mobile fallback: if download didn't work, open in new tab
-		  setTimeout(function() {
-			if (navigator.userAgent.match(/iPhone|iPad|iPod|Android/i)) {
-			  var newWindow = window.open('about:blank', '_blank');
-			  if (newWindow) {
-				newWindow.document.write(`
-				  <html>
-					<head>
-					  <title>Your Pwchin</title>
-					  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-					  <style>
-						body { 
-						  margin: 0; 
-						  display: flex; 
-						  justify-content: center; 
-						  align-items: center; 
-						  min-height: 100vh; 
-						  background: #333;
-						  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-						}
-						.container {
-						  text-align: center;
-						  padding: 20px;
-						}
-						img { 
-						  max-width: 100%; 
-						  height: auto; 
-						  border-radius: 12px;
-						  box-shadow: 0 8px 24px rgba(0,0,0,0.5);
-						}
-						.instructions {
-						  margin-top: 20px;
-						  color: white;
-						  background: rgba(0,0,0,0.8);
-						  padding: 15px 25px;
-						  border-radius: 30px;
-						  font-size: 16px;
-						  display: inline-block;
-						}
-					  </style>
-					</head>
-					<body>
-					  <div class="container">
-						<img src="${URL.createObjectURL(blob)}" alt="Your Pwchin" />
-						<div class="instructions">📱 Long press image → Save</div>
-					  </div>
-					</body>
-				  </html>
-				`);
-			  }
-			}
-		  }, 1500);
-		  
-		}, 'image/png');
+		// SIMPLE APPROACH: Open in new tab - ALWAYS works on mobile
+		var newWindow = window.open('about:blank', '_blank');
+		
+		if (newWindow) {
+		  // Write image to new window with save instructions
+		  newWindow.document.write(`
+			<html>
+			  <head>
+				<title>Your Pwchin</title>
+				<meta name="viewport" content="width=device-width, initial-scale=1.0">
+				<style>
+				  body { 
+					margin: 0; 
+					display: flex; 
+					justify-content: center; 
+					align-items: center; 
+					min-height: 100vh; 
+					background: #333;
+					font-family: Arial, sans-serif;
+				  }
+				  .container {
+					text-align: center;
+					padding: 20px;
+				  }
+				  img { 
+					max-width: 100%; 
+					height: auto; 
+					border-radius: 8px;
+					box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+				  }
+				  .instructions {
+					margin-top: 20px;
+					color: white;
+					background: #000;
+					padding: 12px 20px;
+					border-radius: 25px;
+					font-size: 16px;
+				  }
+				</style>
+			  </head>
+			  <body>
+				<div class="container">
+				  <img src="${imageData}" alt="Your Pwchin" />
+				  <div class="instructions">📱 LONG PRESS IMAGE → SAVE</div>
+				</div>
+			  </body>
+			</html>
+		  `);
+		  newWindow.document.close();
+		} else {
+		  // Popup blocked - show image in current page
+		  alert("Popup blocked. Long press on the image below to save.");
+		  $("#previewImage").html(getCanvas);
+		}
 	  });
 	}
 
@@ -1557,9 +1535,6 @@ else { password.setSelectionRange(0, password.value.length);document.getElementB
 	  // PROPER SWAP: Show editor, hide generated view
 	  $("#generated-view").addClass('noshow');
 	  $("#dxeditor").removeClass('noshow');
-	  
-	  // Reset download button text
-	  $("#btn-Download-Image").text('Download Image');
 	});
 
 	// Initialize download button
@@ -1886,10 +1861,10 @@ $( "#clear" ).click(function() {
 });
 	
 </script>
-
 	
 </body>
 </html>
+
 
 
 
