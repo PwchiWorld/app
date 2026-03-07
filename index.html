@@ -1453,94 +1453,91 @@ else { password.setSelectionRange(0, password.value.length);document.getElementB
 	var getCanvas; // global variable
 
 	// Function to handle download (WORKS ON ALL DEVICES)
-	function setupDownloadButton() {
-	  $("#btn-Download-Image").off('click').on('click', function () {
-		if (!getCanvas) {
-		  alert("Please generate an image first");
-		  return;
-		}
-		
-		// Show loading state
-		$(this).text('Processing...');
-		
-		// Convert canvas to blob for better mobile support
-		getCanvas.toBlob(function(blob) {
-		  var url = URL.createObjectURL(blob);
-		  var link = document.createElement('a');
-		  link.href = url;
-		  link.download = 'mypwchin.png';
-		  
-		  // For mobile, make sure it's visible and triggered properly
-		  link.style.position = 'absolute';
-		  link.style.left = '-9999px';
-		  document.body.appendChild(link);
-		  
-		  // Trigger click
-		  link.click();
-		  
-		  // Clean up
-		  setTimeout(function() {
-			document.body.removeChild(link);
-			URL.revokeObjectURL(url);
-			$("#btn-Download-Image").text('Download Image');
-		  }, 1000);
-		  
-		  // Mobile fallback: if download didn't work, open in new tab
-		  setTimeout(function() {
-			if (navigator.userAgent.match(/iPhone|iPad|iPod|Android/i)) {
-			  var newWindow = window.open('about:blank', '_blank');
-			  if (newWindow) {
-				newWindow.document.write(`
-				  <html>
-					<head>
-					  <title>Your Pwchin</title>
-					  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-					  <style>
-						body { 
-						  margin: 0; 
-						  display: flex; 
-						  justify-content: center; 
-						  align-items: center; 
-						  min-height: 100vh; 
-						  background: #333;
-						  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-						}
-						.container {
-						  text-align: center;
-						  padding: 20px;
-						}
-						img { 
-						  max-width: 100%; 
-						  height: auto; 
-						  border-radius: 12px;
-						  box-shadow: 0 8px 24px rgba(0,0,0,0.5);
-						}
-						.instructions {
-						  margin-top: 20px;
-						  color: white;
-						  background: rgba(0,0,0,0.8);
-						  padding: 15px 25px;
-						  border-radius: 30px;
-						  font-size: 16px;
-						  display: inline-block;
-						}
-					  </style>
-					</head>
-					<body>
-					  <div class="container">
-						<img src="${URL.createObjectURL(blob)}" alt="Your Pwchin" />
-						<div class="instructions">📱 Long press image → Save</div>
-					  </div>
-					</body>
-				  </html>
-				`);
-			  }
-			}
-		  }, 1500);
-		  
-		}, 'image/png');
-	  });
-	}
+// Fixed setupDownloadButton function for better mobile support
+function setupDownloadButton() {
+  $("#btn-Download-Image").off('click').on('click', function () {
+    if (!getCanvas) {
+      alert("Please generate an image first");
+      return;
+    }
+    
+    var $btn = $(this);
+    var originalText = $btn.text();
+    $btn.text('Processing...');
+    
+    // Convert canvas to blob for better mobile support
+    getCanvas.toBlob(function(blob) {
+      var url = URL.createObjectURL(blob);
+      var filename = 'mypwchin.png';
+      
+      // Check if it's a mobile device
+      var isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+      
+      if (isMobile) {
+        // MOBILE FIX: 
+        // 1. Create a persistent link that stays in DOM for a bit
+        // 2. Open a new window immediately if download fails
+        // 3. Use a cleaner approach for the "Save Image" instructions
+        
+        var link = document.createElement('a');
+        link.href = url;
+        link.download = filename;
+        link.style.display = 'none';
+        document.body.appendChild(link);
+        link.click();
+        
+        // Mobile fallback: Open in a new tab for manual saving
+        // This is often necessary because mobile browsers (especially iOS Safari) 
+        // frequently block programmatic downloads from blobs.
+        setTimeout(function() {
+          var newWindow = window.open(url, '_blank');
+          if (!newWindow || newWindow.closed || typeof newWindow.closed == 'undefined') {
+            // If window.open was blocked, create the custom overlay/page
+            var newTab = window.open();
+            if (newTab) {
+              newTab.document.write(`
+                <html>
+                  <head>
+                    <title>Save Your Image</title>
+                    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                    <style>
+                      body { margin: 0; display: flex; flex-direction: column; justify-content: center; align-items: center; min-height: 100vh; background: #1a1a1a; font-family: sans-serif; color: white; }
+                      img { max-width: 90%; border-radius: 8px; box-shadow: 0 4px 20px rgba(0,0,0,0.5); }
+                      .hint { margin-top: 20px; padding: 12px 24px; background: #333; border-radius: 50px; font-size: 14px; }
+                    </style>
+                  </head>
+                  <body>
+                    <img src="${url}" />
+                    <div class="hint">📱 Long press image to Save</div>
+                  </body>
+                </html>
+              `);
+            } else {
+              alert("Please allow popups to save your image on mobile, or long-press the preview image.");
+            }
+          }
+          
+          document.body.removeChild(link);
+          $btn.text(originalText);
+          // Don't revoke immediately on mobile as the new tab needs the URL
+          setTimeout(() => URL.revokeObjectURL(url), 10000); 
+        }, 500);
+        
+      } else {
+        // DESKTOP: Standard download approach
+        var link = document.createElement('a');
+        link.href = url;
+        link.download = filename;
+        link.click();
+        
+        setTimeout(function() {
+          URL.revokeObjectURL(url);
+          $btn.text(originalText);
+        }, 100);
+      }
+    }, 'image/png');
+  });
+}
 
 	// Generate and Flip functionality
 	$("#btn-Preview-Image").on('click', function () {
@@ -1899,6 +1896,7 @@ $( "#clear" ).click(function() {
 	
 </body>
 </html>
+
 
 
 
