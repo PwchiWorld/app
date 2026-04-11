@@ -12,4 +12,4 @@
 #lfx_crowdfunding: # Replace with a single LFX Crowdfunding project-name e.g., cloud-foundry
 # Replace with up to 4 custom sponsorship URLs e.g., ['link1', 'link2']
 
-custom: https://donate.stripe.com/9AQ3fK45P1rIfZubIJ
+# custom: https://donate.stripe.com/9AQ3fK45P1rIfZubIJ
